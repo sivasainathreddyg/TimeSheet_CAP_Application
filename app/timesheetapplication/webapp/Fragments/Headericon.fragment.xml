@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<ResponsivePopover id="LogoutForm" class="sapUiContentPadding" placement="Bottom" title="Account">
+		<content>
+			<VBox>
+				<Title id="title" text="" level="H1"></Title>
+				<Link id="email" text=""></Link>
+				<Link id="Home" text="Go to home" press="onHomePress"></Link>
+			</VBox>
+		</content>
+		<endButton>
+			<Button id="Signoutbutton" icon="sap-icon://log" text="SignOut" press="HandleSignout" type="Emphasized"/>
+		</endButton>
+	</ResponsivePopover>
+</core:FragmentDefinition>

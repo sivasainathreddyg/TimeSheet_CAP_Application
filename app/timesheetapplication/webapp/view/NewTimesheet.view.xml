@@ -1,0 +1,333 @@
+<mvc:View
+    controllerName="timesheetapplication.controller.NewTimesheet"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+>
+    <App>
+        <pages>
+            <Page
+                title="Timesheet Allocations"
+                navButtonPress="onBackPressTimeSheetPage"
+                showNavButton="true"
+            >
+                <headerContent>
+                    <Title
+                        text=""
+                        id="FullName"
+                        level="H1"
+                    />
+                    <core:Icon
+                        src="sap-icon://customer"
+                        size="150%"
+                        press="CustomerHeader"
+                        decorative="false"
+                        id="idUserIcon"
+                        color="#0000ff"
+                    >
+                        <core:layoutData>
+                            <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                    </core:Icon>
+                </headerContent>
+                <content>
+                    <!-- Navigation buttons and date range (sticky) -->
+                    <VBox
+                        class=""
+                        id="stickyHeader"
+                    >
+                        <!--<HBox alignItems="Center" class="sapUiTinyMarginBottom">-->
+                        <!--	<Button text="" press="onBackButton" icon="sap-icon://navigation-left-arrow"/>-->
+                        <!--	<ToolbarSpacer width="2rem"/>-->
+                        <!--	<Text text="Timesheet Allocations" class="boldTitle"/>-->
+                        <!--</HBox>-->
+                        <!-- Timesheet Allocations Title and action buttons (sticky) -->
+                        <HBox
+                            justifyContent="SpaceBetween"
+                            alignItems="Center"
+                            class=""
+                        >
+                            <HBox alignItems="Center">
+                                <Label
+                                    text="Date Range:"
+                                    class="sapUiTinyMarginEnd classLabelDtRng"
+                                />
+                                <ComboBox
+                                    id="dateRangeComboBox"
+                                    selectionChange="onDateRangeChange"
+                                    items="{/dateRanges}"
+                                    width="250px"
+                                >
+                                    <core:Item
+                                        key="{key}"
+                                        text="{text}"
+                                    />
+                                </ComboBox>
+                            </HBox>
+                            <HBox alignItems="Center">
+                                <!--<ComboBox id="usersComboBox" items="{/array}" selectionChange="getAppointments('comboBox')" class="sapUiTinyMarginStart sapUiTinyMarginEnd">-->
+                                <!--	<core:Item text="{Fullname}" key="{Email}"/>-->
+                                <!--</ComboBox>-->
+                                <Button
+                                    id="Addiconbtn"
+                                    icon="sap-icon://add"
+                                    press="onAddPress"
+                                    tooltip="Add New project"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                            </HBox>
+                        </HBox>
+                    </VBox>
+                    <!-- ScrollContainer for Table -->
+                    <ScrollContainer
+                        width="100%"
+                        height="calc(100vh - 200px)"
+                        horizontal="false"
+                        vertical="true"
+                    >
+                        <!-- Allocation table -->
+                        <Table
+                            id="allocationTable"
+                            inset="false"
+                            class=""
+                            items="{path: '/allocations'}"
+                        >
+                            <columns>
+                                <Column
+                                    width="15%"
+                                    hAlign="Center"
+                                >
+                                    <Text
+                                        text="Project Name"
+                                        textAlign="Begin"
+                                    />
+                                </Column>
+                                <Column
+                                    width="25%"
+                                    hAlign="Center"
+                                >
+                                    <Text
+                                        text="Description"
+                                        textAlign="Center"
+                                    />
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Mon"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/0}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Tue"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/1}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Wed"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/2}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Thu"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/3}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Fri"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/4}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Sat"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/5}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="8%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Sun"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/6}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Center"
+                                >
+                                    <Text
+                                        text="Total Hours"
+                                        textAlign="Center"
+                                    />
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem class="customRowSpacing">
+                                    <cells>
+                                        <ComboBox
+                                            selectedKey="{project}"
+                                            visible="{hidingProjNam}"
+                                            placeholder="Select project name"
+                                            items="{
+												path: 'projectModel>/',
+												templateShareable: false
+											}"
+                                        >
+                                            <core:Item
+                                                key="{projectModel>ProjectID}"
+                                                text="{projectModel>PROJECTNAME}"
+                                            />
+                                        </ComboBox>
+                                        <HBox>
+                                            <TextArea
+                                                id="descriptionInput"
+                                                width="100%"
+                                                value="{description}"
+                                                visible="{flags/hidingTextarea}"
+                                                placeholder="Enter description (up to 100 words)"
+                                                maxLength="1000"
+                                                liveChange="onDescriptionLiveChange"
+                                            />
+                                            <Text
+                                                text="Total:"
+                                                visible="{flags/hidingTotalInt}"
+                                            />
+                                        </HBox>
+                                        <Input
+                                            value="{hours/mon}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/tue}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/wed}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/thu}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/fri}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/sat}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Input
+                                            value="{hours/sun}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            submit="onHoursChange"
+                                            class="classHrsInput"
+                                        />
+                                        <Text
+                                            text="{totalHours}"
+                                            textAlign="Center"
+                                            class="classHrsInput"
+                                        />
+                                        <Button
+                                            icon="sap-icon://delete"
+                                            press=".onDeletePress"
+                                            type="Reject"
+                                            visible="{= ${isDeleteButtonVisible} }"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                </content>
+                <footer>
+                    <OverflowToolbar>
+                        <ToolbarSpacer />
+                        <Button
+                            text="Save"
+                            press="onSave"
+                            class="sapUiTinyMarginEnd"
+                            type="Accept"
+                        />
+                        <Button
+                            text="Submit for Approval"
+                            press="onSave"
+                            type="Emphasized"
+                        />
+                    </OverflowToolbar>
+                </footer>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>

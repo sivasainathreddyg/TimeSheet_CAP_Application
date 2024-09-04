@@ -1,0 +1,419 @@
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+.sapUiGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+.sapMGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce) {
+    background-color: #0000001c;
+    background-image: none;
+}
+
+#__bar1-BarPH>span#__label2 {
+    margin-left: 35em;
+}
+
+.classLabelDtRng {
+    color: #15bbe9;
+}
+
+footer.sapMDialogFooter {
+    background-color: #465f5f;
+}
+
+.classBold {
+    font-weight: bold !important;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDaySelected {
+    background: #e5faed70;
+}
+
+span#container-BPSH133_LeaveTracker---Main--legendButton-img {
+    color: aqua;
+}
+
+div#__bar0 {
+    background-color: #dcf3fd52;
+}
+
+div#__bar1 {
+    background-color: #ffffff69;
+}
+
+th#container-BPSH133_LeaveTracker---Timesheet--timesheetTable-tblHeadHighlight {
+    background-color: #ffffff69;
+}
+
+span#container-BPSH133_LeaveTracker---Main--Notificationbtn-img {
+    color: #e3f0fd;
+}
+
+span#container-BPSH133_LeaveTracker---Timesheet--Notificationbtn-img {
+    color: #e3f0fd;
+}
+
+.sapMSPCMonthWeek>.sapMSPCMonthWeekNumber {
+    text-align: right;
+    box-sizing: border-box;
+    color: #32363a;
+    font-family: "72", "72full", Arial, Helvetica, sans-serif;
+    font-size: .875rem;
+    background-color: #fff3;
+}
+
+.sapMSinglePCGridContent {
+    background-color: #fff0;
+}
+
+.sapMSPCMonthDay {
+    height: 8.25rem;
+    min-width: 2.3125rem;
+    background-color: transparent;
+}
+
+.sapMSPCMonthDay.nonWorkingTimeframe {
+    background-color: #f2f2f245 !important;
+}
+
+.sapMSinglePC .sapMPCHeadNavToolbar.sapMTB-Transparent-CTX.sapMTB {
+    background-color: #fff0;
+}
+
+.sapMPCHead .sapMPCHeadActionsToolbar,
+.sapMPCHead .sapMPCHeadNavToolbar,
+.sapMPCHead .sapMTB.sapMTB-Transparent-CTX {
+    padding-left: 1rem;
+    background-color: #fff0;
+}
+
+span#__button2-img {
+    color: #a5ffda;
+}
+
+bdi#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-PickerBtn-BDI-content {
+    color: #ffdb00;
+    font-weight: bold;
+}
+
+span#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-TodayBtn-content {
+    color: #00f6ff;
+    font-weight: bold;
+}
+
+
+span#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-PrevBtn-img {
+    color: aqua;
+}
+
+span#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-NextBtn-img {
+    color: aqua;
+}
+
+#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH1,
+#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH2,
+#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH3,
+#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH4,
+#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH5 {
+    background-color: #c7e8ef !important;
+}
+
+.classFooterHidden {
+    visibility: hidden;
+}
+
+.classFooterVisible {
+    visibility: visible;
+}
+
+
+/*div#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH1 {*/
+/*    background-color: #c7e8ef !important;*/
+/*}*/
+
+/*div#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH2 {*/
+/*    background-color: #c7e8ef !important;*/
+/*}*/
+
+/*div#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH3 {*/
+/*    background-color: #c7e8ef !important;*/
+/*}*/
+
+/*div#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH4 {*/
+/*    background-color: #c7e8ef !important;*/
+/*}*/
+
+/*div#container-BPSH133_LeaveTracker---Main--SPC1-GridMV-WH5 {*/
+/*    background-color: #c7e8ef !important;*/
+/*}*/
+
+.hboxClassId {
+    position: relative;
+    top: 10px;
+    left: 650px;
+}
+
+.hboxClassCreate {
+    position: relative;
+    top: 155px;
+    left: 940px;
+}
+
+.signupButtonClass {
+    left: 130px;
+}
+
+.loginButtonClassId {
+    left: 70px;
+}
+
+.accountButtonClassId {
+    position: relative;
+    left: 0px;
+}
+
+.hyperLinkId.contentId {
+    position: relative;
+    top: 250px;
+    right: 380px;
+}
+
+.sbpTittleId {
+    position: relative;
+    top: 200px;
+    /*font-size: 60px;*/
+    left: 102px;
+    /*color: blue;*/
+}
+
+.subTittletextClass {
+    font-weight: bold;
+    position: relative;
+    top: 220px;
+    left: -55px;
+    font-size: 15px;
+}
+
+html.sap-desktop .sapMShellCentralBox {
+    box-shadow: none;
+    background-color: transparent !important;
+}
+
+.sapMPageBgStandard {
+    background-color: #f7f7f700;
+}
+
+/* style.css */
+.sapMSPC {
+    background-color: transparent !important;
+}
+
+.sapMSPCRow {
+    background-color: transparent !important;
+}
+
+.sapMSPCApp {
+    background-color: transparent !important;
+}
+
+.sapMSPCApp:before {
+    background-color: transparent !important;
+}
+
+.classLabel.sapMLabel {
+    color: #101010;
+    font-size: .875rem;
+    font-family: "72", "72full", Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    display: inline-block;
+    white-space: nowrap;
+    cursor: text;
+    overflow: hidden;
+    box-sizing: border-box;
+
+}
+
+div#__page0-intHeader {
+    background-color: #fff0;
+}
+
+html.sap-desktop .sapMIBar.sapMFooter-CTX {
+    background-color: #fff0;
+    border-top: 1px solid #d9d9d9;
+}
+
+.classBarMiddle {
+    margin-left: 32em !important;
+}
+
+/*.sapMText {*/
+/*    font-weight: bold;*/
+/*    display: inline-block;*/
+/*    box-sizing: border-box;*/
+/*    white-space: pre-line;*/
+/*    word-wrap: break-word;*/
+/*    cursor: text;*/
+/*    font-size: .875rem;*/
+/*    font-family: "72", "72full", Arial, Helvetica, sans-serif;*/
+/*    line-height: normal;*/
+/*    color: #0a0a0a;*/
+/*}*/
+
+/* style.css */
+/*.transparentBackground {*/
+/*    background-color: transparent !important;*/
+/*}*/
+
+
+.sapUiGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+.sapMGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce) {
+    background-color: transparent;
+    background-image: none;
+}
+
+/*.transparent {*/
+/*    background-color: transparent !important;*/
+/*}*/
+
+/* registation form styling */
+.registationFormHboxClassId {
+    position: relative;
+    top: 220px;
+    left: 530px;
+}
+
+.classtitletimeshhet {
+    margin-right: 41%;
+}
+
+.classnewtimesheetbutton {
+    margin-left: 30%;
+    margin-top: 20px;
+}
+
+/* Enter your custom styles here */
+/* style.css */
+.sapUiResponsiveMargin {
+    margin: 2rem;
+}
+
+.sapUiTinyMarginBottom {
+    margin-bottom: 0.5rem;
+}
+
+.sapUiSmallMarginTop {
+    margin-top: 1rem;
+}
+
+.sapUiTinyMarginEnd {
+    margin-right: 0.1rem;
+}
+
+.sapUiTinyMarginStart {
+    margin-left: 2.0rem;
+}
+
+.boldTitle {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.boldLargeText {
+    font-weight: bold;
+    font-size: large;
+    /* Adjust size as needed, e.g., larger, xx-large */
+}
+
+
+.ProjectNamecloumn {
+    padding-right: 10px;
+}
+
+.customRowSpacing {
+    padding: -1 rem !important;
+    /* Reduce padding between rows */
+    margin: 0 !important;
+}
+
+.customCellSpacing>* {
+    padding: -1 rem !important;
+    /* Reduce padding within cells */
+    margin: 0 !important;
+}
+
+.moveRight {
+    margin-left: 10px !important;
+    /* Adjust the left margin as needed */
+}
+
+.customDateRangeMargin {
+    margin-left: 1rem;
+    /* Adjust the spacing as needed */
+}
+
+.sapUiSizeCompact .sapMListTblCell.sapMListTblHeaderCell {
+    padding-left: 54px;
+}
+
+.Totalclass {
+    margin-right: 30px !important;
+
+}
+
+.Totallable {
+    font-size: large;
+    font-weight: bold;
+}
+
+
+
+.classtotal {
+    margin-left: -9px;
+}
+
+.classtotalsat {
+    margin-left: -13px !important;
+}
+
+.input-error {
+    border: 2px solid red !important;
+}
+
+/* In your custom CSS file or style block */
+.customSegmentedButton {
+    margin: 0;
+    /* Adjust margin as needed */
+}
+
+.sapMBar {
+    background-color: #f0f0f0;
+    /* Customize background color */
+}
+
+/* In your custom CSS file or style block */
+.customSegmentedButton {
+    margin: 0;
+    /* Adjust margin as needed */
+}
+
+.sapMShellGlobalOuterBackground {
+    background: url(../images/glass.jpg) no-repeat center top fixed;
+}
+
+.sapUiGlobalBackgroundColor,
+.sapMShellGlobalInnerBackground {
+    background-color: #f7f7f700;
+}
+
+.sapMBar {
+    background-color: #f0f0f0;
+    /* Customize background color */
+}
+
+.sapMButton {
+    margin: 0 4px;
+    /* Add some spacing between buttons if needed */
+}
+
+/* Add this to your CSS file or within a <style> block */
