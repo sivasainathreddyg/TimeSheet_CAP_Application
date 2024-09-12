@@ -90,31 +90,36 @@
                         <!-- Allocation table -->
                         <Table
                             id="allocationTable"
-                            inset="false"
-                            class=""
                             items="{path: '/allocations'}"
                         >
                             <columns>
                                 <Column
-                                    width="15%"
+                                    width="14%"
                                     hAlign="Center"
                                 >
-                                    <Text
-                                        text="Project Name"
-                                        textAlign="Begin"
-                                    />
+                                    <Text text="Project Type" />
                                 </Column>
                                 <Column
-                                    width="25%"
+                                    width="13%"
                                     hAlign="Center"
                                 >
-                                    <Text
-                                        text="Description"
-                                        textAlign="Center"
-                                    />
+                                    <Text text="Project Name" />
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Phase" />
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Begin"
+                                >
+                                    <Text text="Deliverable" />
+                                </Column>
+                                <!-- Days Columns -->
+                                <Column
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -126,7 +131,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -138,7 +143,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -150,7 +155,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -162,7 +167,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -174,7 +179,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -186,7 +191,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="8%"
+                                    width="11%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -201,33 +206,95 @@
                                     width="10%"
                                     hAlign="Center"
                                 >
-                                    <Text
-                                        text="Total Hours"
-                                        textAlign="Center"
-                                    />
+                                    <Text text="Total Hours" />
                                 </Column>
                                 <Column
                                     width="10%"
                                     hAlign="Center"
                                 >
+                                    <Text text="Avail Hours" />
+                                </Column>
+                                <Column
+                                    width="3%"
+                                    hAlign="Center"
+                                >
                                     <Text text="" />
                                 </Column>
                             </columns>
+
                             <items>
                                 <ColumnListItem class="customRowSpacing">
                                     <cells>
+                                        <!-- Project Type ComboBox -->
                                         <ComboBox
-                                            selectedKey="{project}"
-                                            visible="{hidingProjNam}"
-                                            placeholder="Select project name"
-                                            items="{
-												path: 'projectModel>/',
-												templateShareable: false
-											}"
+                                            selectedKey="{Type}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select an option"
                                         >
                                             <core:Item
-                                                key="{projectModel>ProjectID}"
+                                                key="Project"
+                                                text="Project"
+                                            />
+                                            <core:Item
+                                                key="ProdSupply"
+                                                text="Prod. Supply"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- Project Name ComboBox -->
+                                        <ComboBox
+                                            selectedKey="{ProjectId}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select project name"
+                                            selectionChange="onProjectSelectionChange"
+                                            items="{
+                                                path: 'projectModel>/',
+                                                templateShareable: false
+                                                }"
+                                        >
+                                            <core:Item
+                                                key="{projectModel>PROJECTID}"
                                                 text="{projectModel>PROJECTNAME}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- Phase ComboBox -->
+                                        <ComboBox
+                                            selectedKey="{Phase}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select a phase"
+                                        >
+                                            <core:Item
+                                                key="Build"
+                                                text="Build"
+                                            />
+                                            <core:Item
+                                                key="Design"
+                                                text="Design"
+                                            />
+                                            <core:Item
+                                                key="GoLiveAndCutover"
+                                                text="Go-Live and Cutover"
+                                            />
+                                            <core:Item
+                                                key="Hypercare"
+                                                text="Hypercare"
+                                            />
+                                            <core:Item
+                                                key="Planning"
+                                                text="Planning"
+                                            />
+                                            <core:Item
+                                                key="ProductionSupport"
+                                                text="Production Support"
+                                            />
+                                            <core:Item
+                                                key="Test"
+                                                text="Test"
+                                            />
+                                            <core:Item
+                                                key="Training"
+                                                text="Training"
                                             />
                                         </ComboBox>
                                         <HBox>
@@ -245,65 +312,60 @@
                                                 visible="{flags/hidingTotalInt}"
                                             />
                                         </HBox>
+
+                                        <!-- Hours Inputs -->
                                         <Input
                                             value="{hours/mon}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/tue}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/wed}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/thu}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/fri}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/sat}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
                                         <Input
                                             value="{hours/sun}"
                                             width="3rem"
                                             change="onHoursChange"
-                                            submit="onHoursChange"
-                                            class="classHrsInput"
                                         />
+
+                                        <!-- Total Hours -->
                                         <Text
                                             text="{totalHours}"
                                             textAlign="Center"
-                                            class="classHrsInput"
                                         />
+                                        <Text
+                                            text="{AvailableHours}"
+                                            textAlign="Center"
+                                        />
+
+                                        <!-- Delete Button -->
                                         <Button
                                             icon="sap-icon://delete"
                                             press=".onDeletePress"
                                             type="Reject"
-                                            visible="{= ${isDeleteButtonVisible} }"
+                                            visible="{isDeleteButtonVisible}"
                                         />
                                     </cells>
                                 </ColumnListItem>

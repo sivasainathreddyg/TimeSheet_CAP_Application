@@ -18,31 +18,34 @@ entity EmployeeDetails {
 }
 
 entity TimeSheetHeader {
-    key TimeSheetID       : UUID;
-        period            : String;
-        EmployeeName      : String;
-        Status            : String;
-        Date              : Date;
-        EmployeeID        : Association to EmployeeDetails; // Association back to EmployeeDetails
-        TimeSheetheaderId : Composition of many TimeSheetItem
-                                on TimeSheetheaderId.TimeSheetID = $self;
+        TimeSheetID  : UUID;
+    key period       : String;
+    key EmployeeName : String;
+        Status       : String;
+        Date         : Date;
+        EmployeeID   : Association to EmployeeDetails; // Association back to EmployeeDetails
+
 }
 
 entity TimeSheetItem {
-        ProjectID    : Association to ProjectDetails;
-        ProjectName  : String;
-        ProjectType  : String;
-        Phase        : String;
-        Deliverable  : String;
-        WorkingHours : Int16;
-        Sunday       : Int16;
-        Monday       : Int16;
-        Tuesday      : Int16;
-        Wednesday    : Int16;
-        Thursday     : Int16;
-        Friday       : Int16;
-        Saturday     : Int16;
-    key TimeSheetID  : Association to TimeSheetHeader;
+    key AUTO_INCREMENT_ID : Integer  ;
+        ProjectID         : Association to ProjectDetails;
+        ProjectName       : String;
+        ProjectType       : String;
+        Phase             : String;
+        Deliverable       : String;
+        WorkingHours      : Int16;
+        Sunday            : Int16;
+        Monday            : Int16;
+        Tuesday           : Int16;
+        Wednesday         : Int16;
+        Thursday          : Int16;
+        Friday            : Int16;
+        Saturday          : Int16;
+        period            : String;
+        EmployeeName      : String;
+        TimeSheetID       : String;
+        AvailableHours:Integer;
 }
 
 

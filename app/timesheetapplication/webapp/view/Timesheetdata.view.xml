@@ -76,6 +76,7 @@
                     id="usersComboBox"
                     items="{/array}"
                     class="sapUiTinyMarginStart sapUiTinyMarginEnd"
+                    
                 >
                     <core:Item
                         text="{FullName}"

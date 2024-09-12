@@ -1,3 +1,4 @@
+
 using TimeSheettable from '../db/Table';
 
 service CatalogService {
@@ -12,5 +13,7 @@ service CatalogService {
     function checkCredentials(email : String, password : String)      returns EmployeeDetails;
     function TimeSheetdata(empid : String)                            returns String;
     function Detailsofproject()                                       returns String;
-    function submitTimeSheet() returns String;
+    function TimeSheetSubmit(headerData : String, itemsData : String,period:String) returns String;
+    function RetriveTimeSheetdata(EmployeeName:String,period:String) returns String;
+    function AvailableHours(ProjectID:String) returns String;
 }

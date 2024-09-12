@@ -71,7 +71,7 @@
       "oGmodel": {
         "type": "sap.ui.model.json.JSONModel"
     },
-      "": {
+      "oModel": {
         "dataSource": "mainService",
         "preload": true,
         "settings": {

@@ -21,7 +21,7 @@ sap.ui.define(
           this.getView().byId("usersComboBox").setSelectedKey(that.oGmodel.oData.loggedInUser.FullName);
           that.oGmodel = this.getOwnerComponent().getModel("oGmodel");
           var sEmpID = that.oGmodel.oData.odata.EMPLOYEEID;
-          this.onFetchTimesheetData(sEmpID);
+          // this.onFetchTimesheetData(sEmpID);
           this.getOwnerComponent().getRouter().getRoute("Timesheetdata").attachPatternMatched(this._onPatternMatched, this);
   
         },
@@ -38,7 +38,7 @@ sap.ui.define(
           if (that.oGmodel.oData.odata) {
             this.getView().mAggregations.content[0].mAggregations.footer.removeStyleClass("classFooterHidden").addStyleClass(
               "classFooterVisible");
-            this.getView().byId("usersComboBox").setVisible(true);
+            this.getView().byId("usersComboBox").setVisible(false);
           } else {
             this.getView().mAggregations.content[0].mAggregations.footer.removeStyleClass("classFooterVisible").addStyleClass(
               "classFooterHidden");
@@ -54,7 +54,7 @@ sap.ui.define(
   
         },
         onFetchTimesheetData: function (sEmployeeID) {
-          var oModel = this.getOwnerComponent().getModel();
+          var oModel = this.getOwnerComponent().getModel("oModel");
           var oParams = {
               empid: sEmployeeID
           };
@@ -73,12 +73,12 @@ sap.ui.define(
                           oTimesheetModel.setData({ timesheetData: parsedData });
                           this.getView().setModel(oTimesheetModel, "timesheetModel");
       
-                          sap.m.MessageToast.show("Timesheet data fetched successfully.");
+                          // sap.m.MessageToast.show("Timesheet data fetched successfully.");
                       } else {
                           sap.m.MessageToast.show("No timesheet data found for the employee.");
                       }
                   } catch (e) {
-                      sap.m.MessageBox.error("Failed to parse timesheet data: " + e.message);
+                      sap.m.MessageBox.error("No timesheet data found for the employee");
                   }
               }.bind(this),
               error: function (oError) {

@@ -9,19 +9,19 @@ module.exports = srv => {
             SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EmailID: email, Password: password })
         );
 
-         console.log("employee found:", employee);
+        console.log("employee found:", employee);
 
         if (employee) {
             const { PASSWORD, EMPLOYEESTATUS, EMPLOYEETYPE, MANAGERFALG, ...filteredEmployee } = employee;
             const fullName = `${filteredEmployee.FIRSTNAME} ${filteredEmployee.LASTNAME}`;
             filteredEmployee.FULLNAME = fullName;
 
-            return [filteredEmployee]; 
+            return [filteredEmployee];
         } else {
             return [];
         }
     });
-    
+
 
 
     // srv.on("checkCredentials", async req => {
@@ -30,7 +30,7 @@ module.exports = srv => {
     //             'SELECT * FROM TIMESHEETTABLE_HOILDAY'
     //         );
     //         console.log("All employees:", allEmployees);
-    
+
     //         if (allEmployees.length > 0) {
     //             console.log("Data found:", allEmployees);
     //         } else {
@@ -40,7 +40,7 @@ module.exports = srv => {
     //         console.error("Error executing query:", error);
     //     }
     // });
-    
+
 
 
     srv.on("Detailsofproject", async req => {
@@ -55,11 +55,25 @@ module.exports = srv => {
         }
     });
 
+    srv.on("AvailableHours", async req => {
+        const projectid = req.data.ProjectID;
+        const AvailableHours = await cds.transaction(req).run(
+            SELECT.one('REMAININGHOURS').from('TIMESHEETTABLE_PROJECTDETAILS').where({ ProjectID: projectid })
+        );
+    
+        if (AvailableHours) {
+            return { AvailableHours: AvailableHours.REMAININGHOURS };  
+        } else {
+            return { AvailableHours: 0 };
+        }
+    });
+    
+
     srv.on("TimeSheetdata", async req => {
         const empid = req.data.empid.trim();
 
         const employee = await cds.transaction(req).run(
-            SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EmployeeID: empid })
+            SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EMPLOYEEID: empid })
         );
 
         if (employee) {
@@ -89,40 +103,186 @@ module.exports = srv => {
         }
     });
 
-    srv.on('submitTimeSheet', async (req) => {
-        const { headerData, itemsData } = req.data;
-        console.log("header", headerData);
-        console.log("items", itemsData);
-        const tx = cds.transaction(req);
+    srv.on('TimeSheetSubmit', async (req) => {
         try {
-            headerObject = JSON.parse(headerData);
-            itemsArray = JSON.parse(itemsData);
-            await tx.run(
+            const headerData = JSON.parse(req.data.headerData);
+            const itemsData = JSON.parse(req.data.itemsData);
+            const period = req.data.period;
+            const empname = headerData.EMPLOYEENAME;
+    
+            const existingHeader = await cds.run(
+                SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+            );
+    
+            if (existingHeader) {
+               
+                await cds.run(
+                    DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+                );
+                await cds.run(
+                    DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
+                );
+            }
+    
+           
+            await cds.run(
                 INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
             );
-
+    
+            
             const itemsInsertPromises = itemsData.map(item => {
-                return tx.run(
+                return cds.run(
                     INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
                 );
             });
-
+    
             await Promise.all(itemsInsertPromises);
-            await tx.commit();
+    
+            if(headerData.STATUS="Submitted"){
+                const projectUpdatePromises = itemsData.map(async (item) => {
+                    const { PROJECTID_PROJECTID, AvailableHours } = item;
+        
+                    await cds.run(
+                        UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                            .set({ REMAININGHOURS:  AvailableHours  })
+                            .where({ PROJECTID: PROJECTID_PROJECTID })
+                    );
+                });
+        
+                await Promise.all(projectUpdatePromises);
 
+            }
+           
+    
             return {
                 status: 'Success',
-                message: 'Timesheet data saved successfully'
+                message: 'Timesheet data saved and project details updated successfully'
             };
+    
         } catch (error) {
-            await tx.rollback();
-            console.error("Error inserting timesheet data:", error);
+            console.error("Error processing timesheet data:", error);
             return {
                 status: 'Error',
-                message: 'Failed to save timesheet data',
+                message: 'Failed to save timesheet data and update project details',
                 error: error.message
             };
         }
     });
+    
+
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
+
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+    //         const period = req.data.period;
+    //         const empname = headerData.EMPLOYEENAME;
+    //         const existingHeader = await cds.run(
+    //             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //         );
+
+    //         if (existingHeader) {
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //         }
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
+
+    //         await Promise.all(itemsInsertPromises);
+            
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved successfully'
+    //         };
+
+    //     } catch (error) {
+    //         console.error("Error inserting timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data',
+    //             error: error.message
+    //         };
+    //     }
+    // });
+
+
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
+    //         // Parse the stringified data into objects
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+
+    //         // Insert header data
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
+
+    //         // Insert each item from the items array
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
+
+    //         await Promise.all(itemsInsertPromises);
+
+
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved successfully'
+    //         };
+    //     } catch (error) {
+    //         console.error("Error inserting timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data',
+    //             error: error.message
+    //         };
+    //     }
+    // });
+
+    srv.on('RetriveTimeSheetdata', async (req) => {
+        const { EmployeeName, period } = req.data;
+
+        try {
+
+            const header = await SELECT.one.from("TIMESHEETTABLE_TIMESHEETHEADER")
+                .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
+
+            // If no header is found, return an empty stringified response
+            if (!header) {
+                return JSON.stringify({ header: [], items: [] });
+            }
+
+            // Fetch associated TimeSheetItem data using the TimeSheetID from header
+            const items = await SELECT.from("TIMESHEETTABLE_TIMESHEETITEM").
+                where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
+
+
+            // Combine header and items into a single object
+            const responseData = {
+                header: [header],
+                items: items
+            };
+
+            // Stringify the combined object
+            return JSON.stringify(responseData);
+
+        } catch (error) {
+            console.error("Error retrieving timesheet data:", error);
+            req.error(500, "Failed to retrieve timesheet data.");
+        }
+    });
+
 
 };
