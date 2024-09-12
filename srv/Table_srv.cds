@@ -1,4 +1,3 @@
-
 using TimeSheettable from '../db/Table';
 
 service CatalogService {
@@ -10,10 +9,10 @@ service CatalogService {
     entity ProjectKY               as projection on TimeSheettable.ProjectKY;
     entity ProjectKo               as projection on TimeSheettable.ProjectKo;
     entity Hoilday                 as projection on TimeSheettable.Hoilday;
-    function checkCredentials(email : String, password : String)      returns EmployeeDetails;
-    function TimeSheetdata(empid : String)                            returns String;
-    function Detailsofproject()                                       returns String;
-    function TimeSheetSubmit(headerData : String, itemsData : String,period:String) returns String;
-    function RetriveTimeSheetdata(EmployeeName:String,period:String) returns String;
-    function AvailableHours(ProjectID:String) returns String;
+    function checkCredentials(email : String, password : String)                           returns EmployeeDetails;
+    function TimeSheetdata(empid : String)                                                 returns String;
+    function Detailsofproject()                                                            returns String;
+    function TimeSheetSubmit(headerData : String, itemsData : String, period : String)     returns String;
+    function RetriveTimeSheetdata(EmployeeName : String, period : String, Status : String) returns String;
+    function AvailableHours(ProjectID : String)                                            returns String;
 }

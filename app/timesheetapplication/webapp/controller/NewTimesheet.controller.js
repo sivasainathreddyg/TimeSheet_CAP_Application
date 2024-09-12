@@ -357,7 +357,8 @@ sap.ui.define(
 
 				var oParams = {
 					EmployeeName: Employeename,
-					period: that.sDateRange
+					period: that.sDateRange,
+					Status:that.Status
 				};
 				// Assuming the response contains the stringified data
 				oModel.callFunction("/RetriveTimeSheetdata", {
