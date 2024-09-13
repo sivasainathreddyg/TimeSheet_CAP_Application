@@ -99,18 +99,33 @@ entity EmployeeProjectRelation {
         EndDate    : DateTime;
 }
 
+// entity ProjectKY {
+//     key KY        : Association to ProjectDetails;
+//         StartDate : Association to ProjectDetails;
+//         EndDate   : Association to ProjectDetails;
+// }
+
+// entity ProjectKo {
+//     key ProjectID      : Association to ProjectDetails;
+//         StartDate      : Association to ProjectDetails;
+//         EndDate        : Association to ProjectDetails;
+//         TotalHours     : Association to ProjectDetails;
+//         RemainingHours : Association to ProjectDetails;
+//         BilledHours    : Int16;
+// }
+
 entity ProjectKY {
-    key KY        : Association to ProjectDetails;
-        StartDate : Association to ProjectDetails;
-        EndDate   : Association to ProjectDetails;
+    key KY        : Int64;
+        StartDate : DateTime;
+        EndDate   : DateTime;
 }
 
 entity ProjectKo {
-    key ProjectID      : Association to ProjectDetails;
-        StartDate      : Association to ProjectDetails;
-        EndDate        : Association to ProjectDetails;
-        TotalHours     : Association to ProjectDetails;
-        RemainingHours : Association to ProjectDetails;
+    key ProjectID      : UUID; 
+        StartDate      : DateTime;
+        EndDate        : DateTime;
+        TotalHours     : Int16;
+        RemainingHours : Int16;
         BilledHours    : Int16;
 }
 

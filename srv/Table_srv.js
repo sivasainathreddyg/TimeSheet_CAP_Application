@@ -140,13 +140,25 @@ module.exports = srv => {
 
             if (headerData.STATUS = "Submitted") {
                 const projectUpdatePromises = itemsData.map(async (item) => {
-                    const { PROJECTID_PROJECTID, AvailableHours } = item;
+                    const { PROJECTID_PROJECTID:projectid, AvailableHours } = item;
 
                     await cds.run(
                         UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
                             .set({ REMAININGHOURS: AvailableHours })
-                            .where({ PROJECTID: PROJECTID_PROJECTID })
+                            .where({ PROJECTID: projectid })
                     );
+                    await cds.run(
+                        UPDATE('TIMESHEETTABLE_PROJECTKO')
+                        .set({REMAININGHOURS:AvailableHours})
+                        .where({PROJECTID:projectid})
+                    )
+                    if (AvailableHours === 0) {
+                        await cds.run(
+                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                .set({ STATUS: "Completed" })
+                                .where({ PROJECTID: projectid })
+                        );
+                    }
                 });
 
                 await Promise.all(projectUpdatePromises);

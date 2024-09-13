@@ -737,7 +737,14 @@ sap.ui.define(
 						
 						remainingHours = availableHours - totalHours;
 					}
+					for(var i=0;i< aItems.length - 1;i++){
+						if (totalHours > availableHours) {
+							MessageToast.show("Error: WORKINGHOURS is greater than available hours for one of the entries.");
+							return; 
+						}
 
+					}
+					
 					var oEntry = {
 						AUTO_INCREMENT_ID: uniqueID,
 						TIMESHEETID: timesheetId,
