@@ -25,6 +25,7 @@
                     <Label
                         text="Time Sheet"
                         design="Bold"
+                        class=".classlabelTimesheet"
                     />
                 </contentMiddle>
                 <contentRight>
@@ -66,23 +67,19 @@
                 alignItems="Center"
             >
                 <Button
+                    id="NewTimeSheet"
                     text="New Time Sheet"
                     press="oncreatenewtimesheet"
                     icon="sap-icon://add-activity"
                     tooltip="Creating new Time Sheet"
                     type="Emphasized"
                 />
-                <ComboBox
-                    id="usersComboBox"
-                    items="{/array}"
-                    class="sapUiTinyMarginStart sapUiTinyMarginEnd"
-                    
-                >
-                    <core:Item
-                        text="{FullName}"
-                        key="{Email}"
-                    />
+               
+                <ComboBox id="usersComboBox" selectionChange="onSelectusername"
+                items="{employeeModel>/employees}">
+                    <core:Item text="{employeeModel>name}" key="{employeeModel>name}" />
                 </ComboBox>
+
             </HBox>
             <Table
                 id="timesheetTable"
@@ -116,11 +113,12 @@
                     <ColumnListItem
                         type="Navigation"
                         press="onRowPress"
+                        class="classcolumlistitemhower"
                     >
                         <cells>
-                            <Text text="{timesheetModel>EMPLOYEENAME}" />
-                            <Text text="{timesheetModel>PERIOD}" />
-                            <Text text="{timesheetModel>STATUS}" />
+                            <Text text="{timesheetModel>EMPLOYEENAME}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>PERIOD}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>STATUS}" class="cellTextClass"/>
                         </cells>
                     </ColumnListItem>
                 </items>

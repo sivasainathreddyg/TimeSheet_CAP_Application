@@ -12,8 +12,14 @@ sap.ui.define([
             that.component = this.getOwnerComponent().getRouter().initialize();
             var oComponent = this.getOwnerComponent();
             that.oGmodel = oComponent.getModel("oGmodel");
-          
-            
+            that.busyDialog = new sap.m.BusyDialog();
+            that.busyDialog.setBusyIndicatorDelay(0);
+            that.busyDialog.setBusyIndicatorSize("Large");
+            that.busyDialog.open();
+            setTimeout(() => {
+                that.busyDialog.close();
+            }, 5000);
+
 
         },
         onSignUpPress: function () {
@@ -23,11 +29,11 @@ sap.ui.define([
             var oModel = this.getOwnerComponent().getModel("oModel");
 
             oModel.refreshMetadata()
-                .then(function() {
+                .then(function () {
                     console.log("Metadata refreshed successfully.");
                     // Proceed with your function call or any further logic here
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error("Error refreshing metadata:", error);
                 });
 
@@ -50,7 +56,8 @@ sap.ui.define([
                         that.oGmodel.setData({
                             loggedInUser: {
                                 Email: oData.EMAILID,
-                                FullName: oData.FULLNAME
+                                FullName: oData.FULLNAME,
+                                MANAGERFLAG: oData.MANAGERFLAG
                             },
                             odata: oData
                         });

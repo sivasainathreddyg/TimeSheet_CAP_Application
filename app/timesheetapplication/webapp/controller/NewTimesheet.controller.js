@@ -69,7 +69,25 @@ sap.ui.define(
 					}],
 					currentStartDate: null, // For dynamic date updates
 					dateRanges: this.getDateRanges(), // Prepopulate the date ranges
-					dates: ["", "", "", "", "", "", ""] // Initially empty
+					dates: ["", "", "", "", "", "", ""] ,// Initially empty
+					isHoliday: { 
+						mon: true,
+						tue: true,
+						wed: true,
+						thu: true,
+						fri: true,
+						sat: true,
+						sun: true
+					},
+					holidayName : {
+						mon: "",
+						tue: "",
+						wed: "",
+						thu: "",
+						fri: "",
+						sat: "",
+						sun: ""
+					},
 				});
 
 				this.getView().setModel(oModel);
@@ -152,23 +170,115 @@ sap.ui.define(
 				this._updateWeek(); // Update dates based on the selected start date
 			},
 
-			_updateWeek: function () {
-				var oModel = this.getView().getModel();
-				var currentStartDate = oModel.getProperty("/currentStartDate");
-				var dates = [];
+			// _updateWeek: function () {
+			// 	var oModel = this.getView().getModel();
+			// 	var currentStartDate = oModel.getProperty("/currentStartDate");
+			// 	var dates = [];
 
+			// 	if (currentStartDate) {
+			// 		for (var i = 0; i < 7; i++) {
+			// 			var date = new Date(currentStartDate);
+			// 			date.setDate(currentStartDate.getDate() + i);
+			// 			dates.push(this._formatDate(date));
+			// 		}
+			// 	} else {
+			// 		dates = ["", "", "", "", "", "", ""];
+			// 	}
+
+			// 	oModel.setProperty("/dates", dates);
+			// },
+			 formatDateToISO:function(date) {
+				var year = date.getFullYear();
+				var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+				var day = String(date.getDate()).padStart(2, '0');
+				return `${year}-${month}-${day}`;
+			},
+
+			_updateWeek: function () {
+				var Model = this.getView().getModel();
+				var currentStartDate = Model.getProperty("/currentStartDate");
+				var dates = [];
+				var isHoliday = { 
+					mon: true,
+					tue: true,
+					wed: true,
+					thu: true,
+					fri: true,
+					sat: true,
+					sun: true
+				};
+				var holidayName = {
+					mon: "",
+					tue: "",
+					wed: "",
+					thu: "",
+					fri: "",
+					sat: "",
+					sun: ""
+				};
+				var dateArray = [];
+			
 				if (currentStartDate) {
 					for (var i = 0; i < 7; i++) {
 						var date = new Date(currentStartDate);
 						date.setDate(currentStartDate.getDate() + i);
-						dates.push(this._formatDate(date));
+						var formattedDate = this.formatDateToISO(date);
+						dateArray.push({
+							date: formattedDate
+						});
+						dates.push(this._formatDate(date));  // For displaying the date
 					}
 				} else {
 					dates = ["", "", "", "", "", "", ""];
 				}
-
-				oModel.setProperty("/dates", dates);
+			
+				var jsonString = JSON.stringify(dateArray);
+				this.holidaycheck(jsonString, dateArray, dates, isHoliday, holidayName, Model);
 			},
+			
+			holidaycheck: function (dates, dateObjects, displayDates, isHoliday, holidayName, Model) {
+				var oModel = this.getOwnerComponent().getModel("oModel");
+			
+				oModel.callFunction("/HolidayCheck", {
+					method: "GET",
+					urlParameters: {
+						dates: dates
+					},
+					success: function (oData, response) {
+						var holidays = JSON.parse(oData.HolidayCheck);
+						if (holidays.length > 0) {
+							holidays.forEach(function(holiday) {
+								var holidayDate = holiday.Date.split('T')[0];
+								var holidayNameValue = holiday.HoildayName;
+			
+								// Find the date in dateObjects and update isHoliday and holidayName fields
+								dateObjects.forEach(function(dateObj, index) {
+									if (dateObj.date === holidayDate) {
+										switch(index) {
+											case 0: isHoliday.mon = false; holidayName.mon = holidayNameValue; break;
+											case 1: isHoliday.tue = false; holidayName.tue = holidayNameValue; break;
+											case 2: isHoliday.wed = false; holidayName.wed = holidayNameValue; break;
+											case 3: isHoliday.thu = false; holidayName.thu = holidayNameValue; break;
+											case 4: isHoliday.fri = false; holidayName.fri = holidayNameValue; break;
+											case 5: isHoliday.sat = false; holidayName.sat = holidayNameValue; break;
+											case 6: isHoliday.sun = false; holidayName.sun = holidayNameValue; break;
+										}
+									}
+								});
+							});
+						}
+			
+						// Set the dates, isHoliday, and holidayName properties in the model
+						Model.setProperty("/dates", displayDates);
+						Model.setProperty("/isHoliday", isHoliday);
+						Model.setProperty("/holidayName", holidayName);
+					},
+					error: function (err) {
+						console.error("Error occurred while fetching holidays:", err);
+					}
+				});
+			},
+				
 
 			onAddPress: function () {
 				var oNewRow = {
@@ -252,26 +362,58 @@ sap.ui.define(
 				this.oGmodel = this.getOwnerComponent().getModel("oGmodel");
 				that.sDateRange = oEvent.getParameter("arguments").dateRange;
 				that.Status = oEvent.getParameter("arguments").Status;
+				that.sName=oEvent.getParameter("arguments").Name;
+				var ManagerFlag=that.oGmodel.oData.odata.MANAGERFLAG ;
 				var Employeename = this.oGmodel.oData.loggedInUser.FullName;
 
-				if (that.Status === "Submitted") {
-					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer.addStyleClass("classFooterHidden");
+				if (that.Status === "Submitted" && ManagerFlag === "Yes") {
+					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
+						.removeStyleClass("classFooterHidden")
+						.addStyleClass("classFooterVisible");
+					this.getView().byId("idsavebtn").setVisible(false);
+					this.getView().byId("idsubmitforapproval").setVisible(false);
+					this.getView().byId("idapproval").setVisible(true);
 					this.getView().byId("Addiconbtn").setVisible(false);
+					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(false);
 					var sEmail = this.oGmodel.oData['loggedInUser'].Email;
 				} else if (that.Status === "Save") {
-					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer.addStyleClass("classFooterVisible");
+					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
+						.removeStyleClass("classFooterHidden")
+						.addStyleClass("classFooterVisible");
+					this.getView().byId("idsavebtn").setVisible(true);
+					this.getView().byId("idsubmitforapproval").setVisible(true);
+					this.getView().byId("idapproval").setVisible(false);
 					this.getView().byId("Addiconbtn").setVisible(true);
 					this.getView().byId("dateRangeComboBox").setEnabled(true);
 					var sEmail = this.oGmodel.oData['loggedInUser'].Email;
-				}
-				else {
-					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer.addStyleClass("classFooterVisible");
+				} else if (that.Status === "Approved") {
+					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
+						.removeStyleClass("classFooterVisible")
+						.addStyleClass("classFooterHidden");
+					this.getView().byId("Addiconbtn").setVisible(false);
+					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
+					this.getView().byId("dateRangeComboBox").setEnabled(false);
+				} else if (that.Status === "Submitted" && ManagerFlag === "No") {
+					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
+						.removeStyleClass("classFooterVisible")
+						.addStyleClass("classFooterHidden");
+					this.getView().byId("Addiconbtn").setVisible(false);
+					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
+					this.getView().byId("dateRangeComboBox").setEnabled(false);
+				} else {
+					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
+						.removeStyleClass("classFooterHidden")
+						.addStyleClass("classFooterVisible");
+					this.getView().byId("idsavebtn").setVisible(true);
+					this.getView().byId("idsubmitforapproval").setVisible(true);
+					this.getView().byId("idapproval").setVisible(false);
 					this.getView().byId("Addiconbtn").setVisible(true);
+					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(true);
 					var sEmail = oEvent.getParameter("arguments").sEmail;
 					var Employeename = this.oGmodel.oData.loggedInUser.FullName;
-				}
+				}				
 				if (that.sDateRange === "D") {
 					var oModel = new JSONModel({
 						array: this.oGmodel.oData.odata.results
@@ -326,12 +468,30 @@ sap.ui.define(
 							}
 						}],
 						dateRanges: this.getDateRanges(),
-						dates: ["", "", "", "", "", "", ""] // Populate date ranges
+						dates: ["", "", "", "", "", "", ""] ,
+						isHoliday: { 
+							mon: true,
+							tue: true,
+							wed: true,
+							thu: true,
+							fri: true,
+							sat: true,
+							sun: true
+						},
+						holidayName : {
+						mon: "",
+						tue: "",
+						wed: "",
+						thu: "",
+						fri: "",
+						sat: "",
+						sun: ""
+					},
 					});
 					this.getView().setModel(that.oModel);
 
 				} else {
-					this.loadData(Employeename);
+					this.loadData();
 				}
 				this.byId("FullName").setText(that.oGmodel.oData.loggedInUser.FullName);
 				var oModel = new JSONModel({
@@ -346,7 +506,7 @@ sap.ui.define(
 					return;
 				}
 			},
-			loadData: function (Employeename) {
+			loadData: function () {
 				var oModel = this.getOwnerComponent().getModel("oModel");
 				that.view = this.getView();
 				var aItems = []
@@ -356,7 +516,7 @@ sap.ui.define(
 				that.busyDialog.open();
 
 				var oParams = {
-					EmployeeName: Employeename,
+					EmployeeName: that.sName,
 					period: that.sDateRange,
 					Status:that.Status
 				};
@@ -403,6 +563,15 @@ sap.ui.define(
 							var oTimesheetModel = new JSONModel({
 								currentStartDate: this.sDateRange,
 								dates: ["", "", "", "", "", "", ""], // Set this as required
+								isHoliday: { 
+									mon: true,
+									tue: true,
+									wed: true,
+									thu: true,
+									fri: true,
+									sat: true,
+									sun: true
+								},
 								allocations: [oDefaultItem]
 							});
 							this.getView().setModel(oTimesheetModel);
@@ -526,7 +695,7 @@ sap.ui.define(
 						});
 
 						that.view.setModel(oTimesheetModel);
-						that.view.byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
+						 that.view.byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 						setTimeout(function () {
 							that.busyDialog.close();
 						}, 3000);
@@ -687,6 +856,32 @@ sap.ui.define(
 			onBackPressTimeSheetPage: function () {
 				this.getOwnerComponent().getRouter().navTo("Timesheetdata")
 			},
+			onApproved: function(oEvent) {
+				var Status = "Approved"; 			
+				var detailsForApproved = {
+					Status: Status,
+					EmpName: that.sName,
+					Period: that.sDateRange
+				};
+			
+				// Stringify the data
+				var jsonData = JSON.stringify(detailsForApproved);
+			
+				var oModel = this.getOwnerComponent().getModel("oModel");
+			
+				oModel.callFunction("/TimeSheetApproved", {
+					method: "GET",
+					urlParameters: { data: jsonData },
+					success: function(oData) {
+						// Handle success
+						sap.m.MessageToast.show("Timesheet status updated successfully.");
+					},
+					error: function(oError) {
+						// Handle error
+						sap.m.MessageBox.error("An error occurred while updating the timesheet status.");
+					}
+				});
+			},
 			onSave: function (oEvent) {
 				var button = oEvent.getSource().getText();
 				var operation = button === "Save" ? "Save" : "Submitted";
@@ -697,7 +892,7 @@ sap.ui.define(
 				var oView = this.getView();
 				var data = this.getOwnerComponent().getModel("oGmodel");
 				var sEmail = data.oData['loggedInUser'].Email;
-				var sDateRange = this.byId("dateRangeComboBox").getSelectedItem().getText() || this.byId("dateRangeComboBox").getValue();
+				var sDateRange = this.byId("dateRangeComboBox").getSelectedItem().getKey() || this.byId("dateRangeComboBox").getValue();
 				var sFullName = data.oData.loggedInUser.FullName;
 				var now = new Date();
 				var year = now.getFullYear();
@@ -737,13 +932,15 @@ sap.ui.define(
 						
 						remainingHours = availableHours - totalHours;
 					}
-					for(var i=0;i< aItems.length - 1;i++){
+					// for(var j=0;j< aItems.length - 1;j++){
+					if( i !== aItems.length-1){
 						if (totalHours > availableHours) {
 							MessageToast.show("Error: WORKINGHOURS is greater than available hours for one of the entries.");
 							return; 
 						}
-
 					}
+
+					// }
 					
 					var oEntry = {
 						AUTO_INCREMENT_ID: uniqueID,

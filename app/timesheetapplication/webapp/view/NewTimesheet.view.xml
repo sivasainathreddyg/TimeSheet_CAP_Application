@@ -12,6 +12,7 @@
                 title="Timesheet Allocations"
                 navButtonPress="onBackPressTimeSheetPage"
                 showNavButton="true"
+                
             >
                 <headerContent>
                     <Title
@@ -318,31 +319,37 @@
                                             value="{hours/mon}"
                                             width="3rem"
                                             change="onHoursChange"
+                                            
                                         />
                                         <Input
                                             value="{hours/tue}"
                                             width="3rem"
                                             change="onHoursChange"
+                                          
                                         />
                                         <Input
                                             value="{hours/wed}"
                                             width="3rem"
                                             change="onHoursChange"
+                                         
                                         />
                                         <Input
                                             value="{hours/thu}"
                                             width="3rem"
                                             change="onHoursChange"
+                                           
                                         />
                                         <Input
                                             value="{hours/fri}"
                                             width="3rem"
                                             change="onHoursChange"
+                              
                                         />
                                         <Input
                                             value="{hours/sat}"
                                             width="3rem"
                                             change="onHoursChange"
+                                            
                                         />
                                         <Input
                                             value="{hours/sun}"
@@ -377,14 +384,22 @@
                     <OverflowToolbar>
                         <ToolbarSpacer />
                         <Button
+                        id="idsavebtn"
                             text="Save"
                             press="onSave"
                             class="sapUiTinyMarginEnd"
                             type="Accept"
                         />
                         <Button
+                        id="idsubmitforapproval"
                             text="Submit for Approval"
                             press="onSave"
+                            type="Emphasized"
+                        />
+                        <Button
+                        id="idapproval"
+                            text="Approved"
+                            press="onApproved"
                             type="Emphasized"
                         />
                     </OverflowToolbar>

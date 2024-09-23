@@ -15,11 +15,11 @@
 			
 			<Label text="Email_ID" labelFor="emailInputId" design="Bold" required="true" class="classLabel"/>
 			<Input id="emailInput" placeholder="EmailID" liveChange="onLivechange"></Input>
-			<Label text="Password" labelFor="passwordInputId" design="Bold" required="true" valueHelpIconSrc="sap-icon://show" valueHelpRequest="show"
+			<Label text="Password" labelFor="passwordInputId" design="Bold" required="true"
 				class="classLabel"></Label>
 			<Input id="passwordInput" placeholder="Enter Password" liveChange="onLivechange" type="Password"></Input>
 			
-			<Button text="Sign Up" type="Emphasized" press="onSignUpPress" class="signupButtonClass" id="buttonid" enabled="true" width="40%"/>
+			<Button text="Sign In" type="Emphasized" press="onSignUpPress" class="signupButtonClass" id="buttonid" enabled="true" width="40%"/>
 			
 		</form:SimpleForm>
 	</HBox>

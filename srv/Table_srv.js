@@ -12,7 +12,7 @@ module.exports = srv => {
         console.log("employee found:", employee);
 
         if (employee) {
-            const { PASSWORD, EMPLOYEESTATUS, EMPLOYEETYPE, MANAGERFALG, ...filteredEmployee } = employee;
+            const { PASSWORD, EMPLOYEESTATUS, EMPLOYEETYPE, ...filteredEmployee } = employee;
             const fullName = `${filteredEmployee.FIRSTNAME} ${filteredEmployee.LASTNAME}`;
             filteredEmployee.FULLNAME = fullName;
 
@@ -76,7 +76,7 @@ module.exports = srv => {
             SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EMPLOYEEID: empid })
         );
 
-        if (employee) {
+        if (employee.MANAGERFLAG === "No") {
             const fullName = `${employee.FIRSTNAME} ${employee.LASTNAME}`;
 
             const timesheetData = await cds.transaction(req).run(
@@ -84,24 +84,81 @@ module.exports = srv => {
                     .columns("period", "Status", "EMPLOYEENAME")
                     .where({ EMPLOYEEID_EMPLOYEEID: empid })
             );
-            //  console.log("timesheet:",timesheetData);
-            //  console.log("employee:",employee);
-
             if (timesheetData && timesheetData.length > 0) {
-                // const result = timesheetData.map(timesheet => ({
-                //     EMPLOYEENAME: fullName,
-                //     PERIOD: timesheet.period,
-                //     STATUS: timesheet.Status
-                // }));
 
                 return JSON.stringify(timesheetData);
             } else {
                 return JSON.stringify();
             }
         } else {
-            return JSON.stringify();
+            const fullName = `${employee.FIRSTNAME} ${employee.LASTNAME}`;
+
+            const ALLtimesheetData = await cds.transaction(req).run(
+                SELECT.from("TIMESHEETTABLE_TIMESHEETHEADER")
+                    .columns("period", "Status", "EMPLOYEENAME")
+                    .where({ Status: { in: ['Submitted', 'Approved'] } })
+            );
+            if (ALLtimesheetData && ALLtimesheetData.length > 0) {
+
+                return JSON.stringify(ALLtimesheetData);
+            }
         }
     });
+
+    srv.on('HolidayCheck', async (req) => {
+        try {
+            const dateArray = JSON.parse(req.data.dates);
+
+            const onlyDates = dateArray.map(item => item.date);
+
+            // Query the holiday table for matching dates
+            const results = await SELECT.from('TIMESHEETTABLE_HOILDAY').where({ Date: { in: onlyDates } });
+
+            // If results exist, map them to a new array with the desired format
+            if (results.length > 0) {
+                const matchingHolidays = results.map(holiday => ({
+                    HoildayName: holiday.HOILDAYNAME,
+                    Date: holiday.DATE  // Format Date to 'YYYY-MM-DD'
+                }));
+
+                // Return the matching holidays as a JSON response
+                return JSON.stringify(matchingHolidays);
+            } else {
+                // No matching holidays found
+                return JSON.stringify({ message: 'No holidays found for the given dates.' });
+            }
+
+        } catch (error) {
+            console.error('Error in Hoildaycheck action:', error);
+            return JSON.stringify({ error: 'An error occurred while checking holidays.' });
+        }
+    });
+    srv.on('TimeSheetApproved', async (req) => {
+        // Parse the stringified JSON data
+        const { data } = req.data;
+        let parsedData;
+    
+        try {
+            parsedData = JSON.parse(data);
+        } catch (error) {
+            return req.error(400, 'Invalid JSON data provided.');
+        }
+    
+        const { Status, EmpName, Period } = parsedData;
+    
+        try {
+           
+            await cds.update('TIMESHEETTABLE_TIMESHEETHEADER')
+                .set({ STATUS: Status })
+                .where({ EMPLOYEENAME: EmpName, PERIOD: Period });
+    
+            return 'Timesheet status updated successfully';
+        } catch (error) {
+            return req.error(500, 'Failed to update timesheet status: ' + error.message);
+        }
+    });
+    
+
 
     srv.on('TimeSheetSubmit', async (req) => {
         try {
@@ -140,7 +197,7 @@ module.exports = srv => {
 
             if (headerData.STATUS = "Submitted") {
                 const projectUpdatePromises = itemsData.map(async (item) => {
-                    const { PROJECTID_PROJECTID:projectid, AvailableHours } = item;
+                    const { PROJECTID_PROJECTID: projectid, AvailableHours } = item;
 
                     await cds.run(
                         UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
@@ -149,8 +206,8 @@ module.exports = srv => {
                     );
                     await cds.run(
                         UPDATE('TIMESHEETTABLE_PROJECTKO')
-                        .set({REMAININGHOURS:AvailableHours})
-                        .where({PROJECTID:projectid})
+                            .set({ REMAININGHOURS: AvailableHours })
+                            .where({ PROJECTID: projectid })
                     )
                     if (AvailableHours === 0) {
                         await cds.run(
@@ -265,30 +322,30 @@ module.exports = srv => {
 
     srv.on('RetriveTimeSheetdata', async (req) => {
         const { EmployeeName, period, Status } = req.data;
-    
+
         try {
             // Fetch the header from TIMESHEETTABLE_TIMESHEETHEADER
             const header = await SELECT.one.from("TIMESHEETTABLE_TIMESHEETHEADER")
                 .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
-    
+
             // If no header is found, return an empty response
             if (!header) {
                 return JSON.stringify({ header: [], items: [] });
             }
-    
+
             // Fetch associated TimeSheetItem data using the TimeSheetID from header
             let items = await SELECT.from("TIMESHEETTABLE_TIMESHEETITEM")
                 .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
-    
+
             if (Status === "Save") {
                 // If Status is "Save", update AvailableHours in the items
                 const updatedItemsPromises = items.map(async (item) => {
                     const { PROJECTID_PROJECTID } = item;
-    
+
                     // Fetch available hours from TIMESHEETTABLE_PROJECTDETAILS based on ProjectID
                     const projectDetails = await SELECT.one.from("TIMESHEETTABLE_PROJECTDETAILS")
                         .where({ PROJECTID: PROJECTID_PROJECTID });
-    
+
                     if (projectDetails) {
                         // Update AvailableHours in the item
                         item.AVAILABLEHOURS = projectDetails.REMAININGHOURS;
@@ -296,29 +353,29 @@ module.exports = srv => {
                         // Set to 0 or some default value if project details are not found
                         item.AVAILABLEHOURS = 0;
                     }
-    
+
                     return item;  // Return the updated item
                 });
-    
+
                 // Wait for all promises to resolve
                 items = await Promise.all(updatedItemsPromises);
             }
-    
+
             // Combine header and items into a single object
             const responseData = {
                 header: [header],
                 items: items
             };
-    
+
             // Return the response as a stringified JSON object
             return JSON.stringify(responseData);
-    
+
         } catch (error) {
             console.error("Error retrieving timesheet data:", error);
             req.error(500, "Failed to retrieve timesheet data.");
         }
     });
-    
+
 
 
 };

@@ -161,7 +161,7 @@ span#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-NextBtn-img {
 }
 
 .signupButtonClass {
-    left: 130px;
+    left: 90px;
 }
 
 .loginButtonClassId {
@@ -193,6 +193,15 @@ span#container-BPSH133_LeaveTracker---Main--SPC1-Header-NavToolbar-NextBtn-img {
     top: 220px;
     left: -55px;
     font-size: 15px;
+    color: aliceblue;
+}
+
+.cellTextClass {
+    color: aliceblue;
+}
+
+.classcolumlistitemhower:hover {
+    background-color: rgba(191, 191, 191, 0.441) !important;
 }
 
 html.sap-desktop .sapMShellCentralBox {
@@ -211,6 +220,13 @@ html.sap-desktop .sapMShellCentralBox {
 
 .sapMSPCRow {
     background-color: transparent !important;
+}
+bdi#__label2-bdi {
+    color: antiquewhite;
+}
+
+span#__page0-title-inner {
+    color: antiquewhite;
 }
 
 .sapMSPCApp {
@@ -397,9 +413,9 @@ html.sap-desktop .sapMIBar.sapMFooter-CTX {
     /* Adjust margin as needed */
 }
 
-.sapMShellGlobalOuterBackground {
-    background: url(../images/glass.jpg) no-repeat center top fixed;
-}
+/* div#container-timesheetapplication---App--app {
+    background: url(images/glass.jpg) !important;
+} */
 
 .sapUiGlobalBackgroundColor,
 .sapMShellGlobalInnerBackground {
