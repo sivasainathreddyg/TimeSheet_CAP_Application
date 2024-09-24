@@ -45,7 +45,7 @@ module.exports = srv => {
 
     srv.on("Detailsofproject", async req => {
         const projectDetails = await cds.transaction(req).run(
-            SELECT.from("TIMESHEETTABLE_PROJECTDETAILS")
+            SELECT.from("TIMESHEETTABLE_PROJECTDETAILS").where({STATUS:"Active"})
         );
 
         if (projectDetails && projectDetails.length > 0) {
@@ -159,20 +159,20 @@ module.exports = srv => {
     });
     
 
-
     srv.on('TimeSheetSubmit', async (req) => {
         try {
             const headerData = JSON.parse(req.data.headerData);
             const itemsData = JSON.parse(req.data.itemsData);
             const period = req.data.period;
             const empname = headerData.EMPLOYEENAME;
-
+    
+            // Check if the timesheet for this period and employee already exists
             const existingHeader = await cds.run(
                 SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
             );
-
+    
             if (existingHeader) {
-
+                // Delete existing timesheet data if already present
                 await cds.run(
                     DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
                 );
@@ -180,54 +180,89 @@ module.exports = srv => {
                     DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
                 );
             }
-
-
+    
+            // Insert new header data
             await cds.run(
                 INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
             );
-
-
+    
+            // Insert new item data
             const itemsInsertPromises = itemsData.map(item => {
                 return cds.run(
                     INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
                 );
             });
-
             await Promise.all(itemsInsertPromises);
-
-            if (headerData.STATUS = "Submitted") {
-                const projectUpdatePromises = itemsData.map(async (item) => {
-                    const { PROJECTID_PROJECTID: projectid, AvailableHours } = item;
-
-                    await cds.run(
-                        UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                            .set({ REMAININGHOURS: AvailableHours })
-                            .where({ PROJECTID: projectid })
-                    );
-                    await cds.run(
-                        UPDATE('TIMESHEETTABLE_PROJECTKO')
-                            .set({ REMAININGHOURS: AvailableHours })
-                            .where({ PROJECTID: projectid })
-                    )
-                    if (AvailableHours === 0) {
-                        await cds.run(
-                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                .set({ STATUS: "Completed" })
-                                .where({ PROJECTID: projectid })
-                        );
+    
+            // Handle project hours update only if status is "Submitted"
+            if (headerData.STATUS === "Submitted") {
+                // Create a map to track total hours worked per project
+                const projectHoursMap = {};
+    
+                // Calculate total hours for each project by summing up the hours worked on the same project
+                itemsData.forEach((item, index) => {
+                    // Skip the last row of items
+                    if (index === itemsData.length - 1) {
+                        return;
+                    }
+                
+                    const projectid = item.PROJECTID_PROJECTID;
+                    const workedHours = item.WORKINGHOURS; // Assuming `WORKINGHOURS` is the field that stores the hours worked
+                
+                    // Accumulate hours for the same project
+                    if (projectHoursMap[projectid]) {
+                        projectHoursMap[projectid] += workedHours;
+                    } else {
+                        projectHoursMap[projectid] = workedHours;
                     }
                 });
-
+                
+                // Update project details for each project based on the total hours worked
+                const projectUpdatePromises = Object.keys(projectHoursMap).map(async (projectid) => {
+                    const totalWorkedHours = projectHoursMap[projectid];
+    
+                    // Get available hours from the project details
+                    const projectDetails = await cds.run(
+                        SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS').where({ PROJECTID: projectid })
+                    );
+    
+                    if (projectDetails) {
+                        const availableHours = projectDetails.REMAININGHOURS;
+    
+                        // Calculate remaining hours
+                        const remainingHours = availableHours - totalWorkedHours;
+    
+                        // Update the project details and project KO table
+                        await cds.run(
+                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                .set({ REMAININGHOURS: remainingHours })
+                                .where({ PROJECTID: projectid })
+                        );
+                        await cds.run(
+                            UPDATE('TIMESHEETTABLE_PROJECTKO')
+                                .set({ REMAININGHOURS: remainingHours })
+                                .where({ PROJECTID: projectid })
+                        );
+    
+                        // If remaining hours are zero, mark the project as "Completed"
+                        if (remainingHours === 0) {
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .set({ STATUS: "Completed" })
+                                    .where({ PROJECTID: projectid })
+                            );
+                        }
+                    }
+                });
+    
                 await Promise.all(projectUpdatePromises);
-
             }
-
-
+    
             return {
                 status: 'Success',
                 message: 'Timesheet data saved and project details updated successfully'
             };
-
+    
         } catch (error) {
             console.error("Error processing timesheet data:", error);
             return {
@@ -237,6 +272,85 @@ module.exports = srv => {
             };
         }
     });
+      
+
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+    //         const period = req.data.period;
+    //         const empname = headerData.EMPLOYEENAME;
+
+    //         const existingHeader = await cds.run(
+    //             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //         );
+
+    //         if (existingHeader) {
+
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //         }
+
+
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
+
+
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
+
+    //         await Promise.all(itemsInsertPromises);
+
+    //         if (headerData.STATUS = "Submitted") {
+    //             const projectUpdatePromises = itemsData.map(async (item) => {
+    //                 const { PROJECTID_PROJECTID: projectid, AvailableHours } = item;
+
+    //                 await cds.run(
+    //                     UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+    //                         .set({ REMAININGHOURS: AvailableHours })
+    //                         .where({ PROJECTID: projectid })
+    //                 );
+    //                 await cds.run(
+    //                     UPDATE('TIMESHEETTABLE_PROJECTKO')
+    //                         .set({ REMAININGHOURS: AvailableHours })
+    //                         .where({ PROJECTID: projectid })
+    //                 )
+    //                 if (AvailableHours === 0) {
+    //                     await cds.run(
+    //                         UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+    //                             .set({ STATUS: "Completed" })
+    //                             .where({ PROJECTID: projectid })
+    //                     );
+    //                 }
+    //             });
+
+    //             await Promise.all(projectUpdatePromises);
+
+    //         }
+
+
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved and project details updated successfully'
+    //         };
+
+    //     } catch (error) {
+    //         console.error("Error processing timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data and update project details',
+    //             error: error.message
+    //         };
+    //     }
+    // });
 
 
     // srv.on('TimeSheetSubmit', async (req) => {

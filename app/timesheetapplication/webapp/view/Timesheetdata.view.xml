@@ -10,7 +10,7 @@
         id="pageid"
         showFooter="true"
     >
-        <customHeader>
+        <customHeader class="sapUiNoMargin">
             <Bar>
                 <contentLeft>
                     <Button

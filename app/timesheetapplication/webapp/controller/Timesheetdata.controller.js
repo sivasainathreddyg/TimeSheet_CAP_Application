@@ -3,30 +3,38 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
+   "sap/m/MessageBox"
   ],
-  function (Controller, JSONModel, Fragment) {
+  function (Controller, JSONModel, Fragment,MessageBox) {
     "use strict";
     var that = this;
 
     return Controller.extend("timesheetapplication.controller.Timesheetdata", {
       onInit: function () {
         // that.component= this.getOwnerComponent().getRouter().initialize();
+       
         this.array = [];
         that.oGmodel = this.getOwnerComponent().getModel("oGmodel");
-        this.byId("FullName").setText(that.oGmodel.oData.loggedInUser.FullName);
-        var oModel = new JSONModel({
-          array: that.oGmodel.oData.odata.FULLNAME
-        });
-        this.getView().byId("usersComboBox").setModel(oModel);
-        this.getView().byId("usersComboBox").setSelectedKey(that.oGmodel.oData.loggedInUser.FullName);
-        that.oGmodel = this.getOwnerComponent().getModel("oGmodel");
-        var sEmpID = that.oGmodel.oData.odata.EMPLOYEEID;
+       
+        // this.byId("FullName").setText(that.oGmodel.oData.loggedInUser.FullName);
+        // var oModel = new JSONModel({
+        //   array: that.oGmodel.oData.odata.FULLNAME
+        // });
+        // this.getView().byId("usersComboBox").setModel(oModel);
+        // this.getView().byId("usersComboBox").setSelectedKey(that.oGmodel.oData.loggedInUser.FullName);
+        // that.oGmodel = this.getOwnerComponent().getModel("oGmodel");
+        // var sEmpID = that.oGmodel.oData.odata.EMPLOYEEID;
         // this.onFetchTimesheetData(sEmpID);
         this.getOwnerComponent().getRouter().getRoute("Timesheetdata").attachPatternMatched(this._onPatternMatched, this);
 
       },
       _onPatternMatched: function () {
+        
         that.oGmodel = this.getOwnerComponent().getModel("oGmodel");
+        if (!that.oGmodel.oData['loggedInUser']) {
+          this.getOwnerComponent().getRouter().navTo("RouteView");
+          return;
+        }
         this.byId("FullName").setText(that.oGmodel.oData.loggedInUser.FullName);
         var oModel = new JSONModel({
           array: that.oGmodel.oData.odata.FULLNAME
@@ -35,6 +43,10 @@ sap.ui.define(
         this.getView().byId("usersComboBox").setSelectedKey(that.oGmodel.oData.loggedInUser.Email);
         var sEmpID = that.oGmodel.oData.odata.EMPLOYEEID;
         this.onFetchTimesheetData(sEmpID);
+        if (!that.oGmodel.oData['loggedInUser']) {
+          this.getOwnerComponent().getRouter().navTo("RouteView");
+          return;
+        }
         if (that.oGmodel.oData.odata.MANAGERFLAG === "No") {
           this.getView().byId("NewTimeSheet").setVisible(true);
           this.getView().mAggregations.content[0].mAggregations.footer.removeStyleClass("classFooterHidden").addStyleClass(
@@ -47,10 +59,7 @@ sap.ui.define(
           this.getView().byId("usersComboBox").setVisible(true);
 
         }
-        if (!that.oGmodel.oData['loggedInUser']) {
-          this.getOwnerComponent().getRouter().navTo("RouteView");
-          return;
-        }
+       
       },
 
       // readDataFromBackend: function () {
@@ -85,10 +94,10 @@ sap.ui.define(
 
                 // sap.m.MessageToast.show("Timesheet data fetched successfully.");
               } else {
-                sap.m.MessageToast.show("No timesheet data found for the employee.");
+                sap.m.MessageToast.show("No timesheet data avalible");
               }
             } catch (e) {
-              sap.m.MessageBox.error("No timesheet data found for the employee");
+              sap.m.MessageBox.error("No timesheet data avalible");
             }
           }.bind(this),
           error: function (oError) {
@@ -115,6 +124,22 @@ sap.ui.define(
           oBinding.filter([oFilter]);
         }
       },
+      onBefore: function () {
+        // Check for unsaved changes before rendering the view (on refresh or navigate)
+        if (true) {
+          sap.m.MessageBox.confirm("You have unsaved changes. Do you want to proceed without saving?", {
+            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+            onClose: function (oAction) {
+              if (oAction === MessageBox.Action.YES) {
+                this.getOwnerComponent().getRouter().navTo("RouteView"); // Navigate to login
+              } else {
+                // Stay on the current page
+              }
+            }.bind(this)
+          });
+        }
+      },
+
       oncreatenewtimesheet: function () {
         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
         var selectedDateRange = "D";
