@@ -144,25 +144,37 @@ sap.ui.define(
         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
         var selectedDateRange = "D";
         var sEmail = "E";
-        var Status = "ST"
+        var Status = "ST";
+        var submitted="SB";
+        var sdate="DT"
         oRouter.navTo("NewTimesheet", {
           dateRange: selectedDateRange,
           Status: Status,
-          Name: sEmail
+          Name: sEmail,
+          submit:submitted,
+          Sdate:sdate
         });
         // this.getOwnerComponent().getRouter().navTo("Timesheet2")
       },
       onRowPress: function (oEvent) {
         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-        var sName=oEvent.oSource.mAggregations.cells[0].mProperties.text;
-        var selectedDateRange = oEvent.oSource.mAggregations.cells[1].mProperties.text;
-        var selectedStatus = oEvent.oSource.mAggregations.cells[2].mProperties.text
+        var items=oEvent.getSource().getBindingContext("timesheetModel").getObject();
+        // var sName=oEvent.oSource.mAggregations.cells[0].mProperties.text;
+        // var selectedDateRange = oEvent.oSource.mAggregations.cells[1].mProperties.text;
+        // var selectedStatus = oEvent.oSource.mAggregations.cells[2].mProperties.text
+        var sName=items.EMPLOYEENAME;
+        var selectedDateRange =items.PERIOD;
+        var selectedStatus = items.STATUS;
+        var submitted=items.SUBMITTEDBY;
+        var sdate=items.DATE;
         // var sEmail="E"
         // var sEmail = this.getView().byId("usersComboBox").getSelectedKey();
         oRouter.navTo("NewTimesheet", {
           dateRange: selectedDateRange,
           Status: selectedStatus,
-          Name: sName
+          Name: sName,
+          submit:submitted,
+          Sdate:sdate
         });
       },
       onHomePress: function () {

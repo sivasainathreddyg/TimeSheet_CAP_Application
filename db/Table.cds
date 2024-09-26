@@ -23,6 +23,7 @@ entity TimeSheetHeader {
     key EmployeeName : String;
         Status       : String;
         Date         : Date;
+        SubmittedBy  : String; 
         EmployeeID   : Association to EmployeeDetails; // Association back to EmployeeDetails
 
 }

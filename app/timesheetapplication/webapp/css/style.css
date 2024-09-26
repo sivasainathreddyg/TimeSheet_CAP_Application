@@ -221,12 +221,17 @@ html.sap-desktop .sapMShellCentralBox {
 .sapMSPCRow {
     background-color: transparent !important;
 }
-bdi#__label2-bdi {
+
+/* bdi#__label2-bdi {
     color: antiquewhite;
-}
+} */
 
 span#__page0-title-inner {
     color: antiquewhite;
+}
+
+.sapMIBar-CTX .sapMLabel {
+    color: #fdfdfd;
 }
 
 .sapMSPCApp {
@@ -281,6 +286,10 @@ html.sap-desktop .sapMIBar.sapMFooter-CTX {
 /*    background-color: transparent !important;*/
 /*}*/
 
+/* .sapMText {
+   
+    color: #f9fafb;
+} */
 
 .sapUiGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
 .sapMGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce) {

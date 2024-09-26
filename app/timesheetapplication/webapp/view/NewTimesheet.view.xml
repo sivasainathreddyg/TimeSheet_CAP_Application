@@ -39,12 +39,7 @@
                         class=""
                         id="stickyHeader"
                     >
-                        <!--<HBox alignItems="Center" class="sapUiTinyMarginBottom">-->
-                        <!--	<Button text="" press="onBackButton" icon="sap-icon://navigation-left-arrow"/>-->
-                        <!--	<ToolbarSpacer width="2rem"/>-->
-                        <!--	<Text text="Timesheet Allocations" class="boldTitle"/>-->
-                        <!--</HBox>-->
-                        <!-- Timesheet Allocations Title and action buttons (sticky) -->
+                        
                         <HBox
                             justifyContent="SpaceBetween"
                             alignItems="Center"
@@ -67,10 +62,34 @@
                                     />
                                 </ComboBox>
                             </HBox>
+                          <HBox id="statusvisible">
+                          <Text
+                                text="Status:"
+                                 textAlign="Center"
+                              
+                                />
+                                <Text text="{ostatusModel>/Status}"  class="sapUiTinyMarginBegin"/>
+                          </HBox>
+
+                           <HBox id ="subdatevisible">
+                          <Text
+                                text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted Date:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved Date:' : 'Saved Date:'}" 
+                                 textAlign="Center"
+                                />
+                                <Text text="{ostatusModel>/SubDate}"  class="sapUiTinyMarginBegin"  />
+                          </HBox>
+
+                           <HBox id="substatusvisible" >
+                          <Text
+                            text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted By:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved By:' : ''}" 
+
+                                 textAlign="Center"
+                                />
+                                <Text text="{=${ostatusModel>/Status} === 'Saved' ? '' : ${ostatusModel>/SubName}}"  class="sapUiTinyMarginBegin" />
+                          </HBox>
+                            
                             <HBox alignItems="Center">
-                                <!--<ComboBox id="usersComboBox" items="{/array}" selectionChange="getAppointments('comboBox')" class="sapUiTinyMarginStart sapUiTinyMarginEnd">-->
-                                <!--	<core:Item text="{Fullname}" key="{Email}"/>-->
-                                <!--</ComboBox>-->
+                                
                                 <Button
                                     id="Addiconbtn"
                                     icon="sap-icon://add"
@@ -394,6 +413,12 @@
                         id="idsubmitforapproval"
                             text="Submit for Approval"
                             press="onSave"
+                            type="Emphasized"
+                        />
+                        <Button
+                        id="iddelete"
+                            text="Delete"
+                            press="onDelete"
                             type="Emphasized"
                         />
                         <Button

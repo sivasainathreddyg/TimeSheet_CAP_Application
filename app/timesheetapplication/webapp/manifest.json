@@ -115,7 +115,7 @@
         },
         {
             "name": "NewTimesheet",
-            "pattern": "NewTimesheet/{dateRange}/{Name}/{Status}",
+            "pattern": "NewTimesheet/{dateRange}/{Name}/{Status}/{submit}/{Sdate}",
             "target": [
                 "NewTimesheet"
             ]

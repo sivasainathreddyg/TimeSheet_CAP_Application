@@ -93,19 +93,29 @@
                 <!--	</Toolbar>-->
                 <!--</headerToolbar>-->
                 <columns>
-                    <Column>
+                    <Column width="30%">
                         <header>
                             <Label text="Name" />
                         </header>
                     </Column>
-                    <Column>
+                    <Column width="30%">
                         <header>
                             <Label text="Period" />
                         </header>
                     </Column>
-                    <Column>
+                    <Column width="30%">
                         <header>
                             <Label text="Status" />
+                        </header>
+                    </Column>
+                     <Column>
+                        <header>
+                            <Label text=""  visible="false"/>
+                        </header>
+                    </Column>
+                     <Column>
+                        <header>
+                            <Label text="" visible="false" />
                         </header>
                     </Column>
                 </columns>
@@ -119,6 +129,8 @@
                             <Text text="{timesheetModel>EMPLOYEENAME}" class="cellTextClass"/>
                             <Text text="{timesheetModel>PERIOD}" class="cellTextClass"/>
                             <Text text="{timesheetModel>STATUS}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>DATE}" class="cellTextClass" visible="false"/>
+                            <Text text="{timesheetModel>SUBMITTEDBY}" class="cellTextClass" visible="false"/>
                         </cells>
                     </ColumnListItem>
                 </items>

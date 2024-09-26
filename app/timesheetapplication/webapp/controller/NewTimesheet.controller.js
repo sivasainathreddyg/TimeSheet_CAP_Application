@@ -96,6 +96,7 @@ sap.ui.define(
 			},
 			_onPatternMatched: function (oEvent) {
 				var view = this.getView();
+				this.getDateRanges();
 				this.oGmodel = this.getOwnerComponent().getModel("oGmodel");
 				if (!that.oGmodel.oData['loggedInUser']) {
 					this.getOwnerComponent().getRouter().navTo("RouteView");
@@ -103,7 +104,30 @@ sap.ui.define(
 				  }
 				that.sDateRange = oEvent.getParameter("arguments").dateRange;
 				that.Status = oEvent.getParameter("arguments").Status;
+				that.Sdate=oEvent.getParameter("arguments").Sdate;
+				that.Ssubmit=oEvent.getParameter("arguments").submit;
+				// if (that.Status === "Approved") {
+				// 	that.sName=oEvent.getParameter("arguments").ApprovedByName ? oEvent.getParameter("arguments").ApprovedByName : '';
+				// } else {
+				// 	that.sName=oEvent.getParameter("arguments").Name;
+				// }
 				that.sName=oEvent.getParameter("arguments").Name;
+				// var oStatus = { Status: that.Status,
+				// 	SubName: that.sName
+				//  };
+				var statusModel = new sap.ui.model.json.JSONModel();
+				//statusModel.setData(oStatus); 
+				this.getView().setModel(statusModel, "ostatusModel");
+				this.getView().getModel("ostatusModel").setProperty("/Status", that.Status); 
+				this.getView().getModel("ostatusModel").setProperty("/SubName",that.Ssubmit); 
+				this.getView().getModel("ostatusModel").setProperty("/SubDate", that.Sdate); 
+
+				// that.Status = oEvent.getParameter("arguments").Status;
+				// var oStatus=that.Status;
+				// var statusModel = new sap.ui.model.json.JSONModel();
+				// statusModel.setData(oStatus);
+				// that.getView().setModel(statusModel, "ostatusModel");
+				
 				var ManagerFlag=that.oGmodel.oData.odata.MANAGERFLAG ;
 				var Employeename = this.oGmodel.oData.loggedInUser.FullName;
 				this.getView().byId("dateRangeComboBox").setSelectedKey("");
@@ -115,11 +139,16 @@ sap.ui.define(
 					this.getView().byId("idsavebtn").setVisible(false);
 					this.getView().byId("idsubmitforapproval").setVisible(false);
 					this.getView().byId("idapproval").setVisible(true);
+					this.getView().byId("iddelete").setVisible(true);
 					this.getView().byId("Addiconbtn").setVisible(false);
 					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(false);
 					var sEmail = this.oGmodel.oData['loggedInUser'].Email;
-				} else if (that.Status === "Save") {
+					this.getView().byId("statusvisible").setVisible(true);
+					this.getView().byId("subdatevisible").setVisible(true);
+					this.getView().byId("substatusvisible").setVisible(true);
+					
+				} else if (that.Status === "Saved") {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
 						.removeStyleClass("classFooterHidden")
 						.addStyleClass("classFooterVisible");
@@ -128,6 +157,12 @@ sap.ui.define(
 					this.getView().byId("idapproval").setVisible(false);
 					this.getView().byId("Addiconbtn").setVisible(true);
 					this.getView().byId("dateRangeComboBox").setEnabled(true);
+					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
+					this.getView().byId("statusvisible").setVisible(true);
+					this.getView().byId("subdatevisible").setVisible(true);
+					this.getView().byId("substatusvisible").setVisible(true);
+					this.getView().byId("iddelete").setVisible(false);
+			
 					var sEmail = this.oGmodel.oData['loggedInUser'].Email;
 				} else if (that.Status === "Approved") {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
@@ -136,6 +171,10 @@ sap.ui.define(
 					this.getView().byId("Addiconbtn").setVisible(false);
 					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(false);
+					this.getView().byId("statusvisible").setVisible(true);
+					this.getView().byId("subdatevisible").setVisible(true);
+					this.getView().byId("substatusvisible").setVisible(true);
+					this.getView().byId("iddelete").setVisible(false);
 				} else if (that.Status === "Submitted" && ManagerFlag === "No") {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
 						.removeStyleClass("classFooterVisible")
@@ -143,6 +182,10 @@ sap.ui.define(
 					this.getView().byId("Addiconbtn").setVisible(false);
 					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(false);
+					this.getView().byId("statusvisible").setVisible(true);
+					this.getView().byId("subdatevisible").setVisible(true);
+					this.getView().byId("substatusvisible").setVisible(true);
+					this.getView().byId("iddelete").setVisible(false);
 				} else {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
 						.removeStyleClass("classFooterHidden")
@@ -153,6 +196,10 @@ sap.ui.define(
 					this.getView().byId("Addiconbtn").setVisible(true);
 					this.getView().byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 					this.getView().byId("dateRangeComboBox").setEnabled(true);
+					this.getView().byId("statusvisible").setVisible(false);
+					this.getView().byId("subdatevisible").setVisible(false);
+					this.getView().byId("substatusvisible").setVisible(false);
+					this.getView().byId("iddelete").setVisible(false);
 					var sEmail = oEvent.getParameter("arguments").sEmail;
 					var Employeename = this.oGmodel.oData.loggedInUser.FullName;
 				}				
@@ -862,12 +909,21 @@ sap.ui.define(
 			onBackPressTimeSheetPage: function () {
 				this.getOwnerComponent().getRouter().navTo("Timesheetdata")
 			},
-			onApproved: function(oEvent) {
+			onApproved: function() {
+				var data = this.getOwnerComponent().getModel("oGmodel");
+				var FullName = data.oData['loggedInUser'].FullName;
+				var now = new Date();
+				var year = now.getFullYear();
+				var month = String(now.getMonth() + 1).padStart(2, '0');
+				var day = String(now.getDate()).padStart(2, '0');
+				var formatedDate = year + '-' + month + '-' + day;
 				var Status = "Approved"; 			
 				var detailsForApproved = {
 					Status: Status,
 					EmpName: that.sName,
-					Period: that.sDateRange
+					Period: that.sDateRange,
+					sDate:formatedDate,
+					sSubmittedby:FullName
 				};
 			
 				// Stringify the data
@@ -880,17 +936,36 @@ sap.ui.define(
 					urlParameters: { data: jsonData },
 					success: function(oData) {
 						// Handle success
-						sap.m.MessageToast.show("Timesheet status updated successfully.");
+						sap.m.MessageToast.show("Timesheet Approved successfully.");
 					},
 					error: function(oError) {
 						// Handle error
-						sap.m.MessageBox.error("An error occurred while updating the timesheet status.");
+						sap.m.MessageBox.error("An error occurred while Approved the timesheet status.");
 					}
 				});
 			},
+			onDelete:function(){
+				var detailsForDelete = {
+					Period: that.sDateRange,
+					EmpName: that.sName
+				};
+				var jsonData=JSON.stringify(detailsForDelete);
+				var oModel=this.getOwnerComponent().getModel("oModel");
+				oModel.callFunction("/TimeSheetDelete",{
+					method: "GET",
+					urlParameters: {deleteddata:jsonData},
+					success:function(odata){
+						sap.m.MessageToast.show("Time Deleted successfully")
+					},
+					error:function(err){
+						sap.m.MessageBox.error("An error occurred while Deleting the timesheet status.")
+					}
+				})
+
+			},
 			onSave: function (oEvent) {
 				var button = oEvent.getSource().getText();
-				var operation = button === "Save" ? "Save" : "Submitted";
+				var operation = button === "Save" ? "Saved" : "Submitted";
 				this.submit(operation);
 			},
 			// submit: function (operation) {
@@ -1035,6 +1110,7 @@ sap.ui.define(
 					TIMESHEETID: timesheetId,
 					PERIOD: sDateRange,
 					EMPLOYEENAME: sFullName,
+					SUBMITTEDBY:sFullName,
 					STATUS: operation,
 					DATE: formatedDate,
 					EMPLOYEEID_EMPLOYEEID: that.sEmpID
@@ -1120,7 +1196,7 @@ sap.ui.define(
 						SATURDAY: parseInt(oCells[9].getValue(), 10) || 0,
 						SUNDAY: parseInt(oCells[10].getValue(), 10) || 0,
 						WORKINGHOURS: totalHours,
-						AvailableHours:remainingHours					};
+						AvailableHours:availableHours					};
 			
 					aItemsData.push(oEntry);
 				}
@@ -1129,7 +1205,7 @@ sap.ui.define(
 				var oPayload = {
 					headerData: JSON.stringify(oHeader),
 					itemsData: JSON.stringify(aItemsData),
-					period: that.sDateRange
+					period: sDateRange
 				};
 			
 				// Get the OData model and call the function
@@ -1140,7 +1216,7 @@ sap.ui.define(
 						if (oData.TimeSheetSubmit.status === "Error") {
 							sap.m.MessageBox.error("TimeSheet already submitted for this time period");
 						} else {
-							MessageToast.show("Timesheet saved successfully!");
+							MessageToast.show("Timesheet" +operation+ " successfully!");
 						}
 					},
 					error: function (oError) {

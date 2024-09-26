@@ -16,5 +16,6 @@ service CatalogService {
     function RetriveTimeSheetdata(EmployeeName : String, period : String, Status : String) returns String;
     function AvailableHours(ProjectID : String)                                            returns String;
     function HolidayCheck(dates : String)                                                  returns String;
-    function TimeSheetApproved(data : String)                                                       returns String;
+    function TimeSheetApproved(data : String)                                              returns String;
+    function TimeSheetDelete(deleteddata : String)                                         returns String;
 }
