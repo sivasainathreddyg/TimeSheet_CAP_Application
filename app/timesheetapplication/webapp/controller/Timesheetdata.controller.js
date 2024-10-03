@@ -90,7 +90,7 @@ sap.ui.define(
 
                 var oComboBoxModel = new sap.ui.model.json.JSONModel();
                 oComboBoxModel.setData({ employees: uniqueEmployeeNames.map(name => ({ name })) });
-                this.getView().setModel(oComboBoxModel, "employeeModel")
+                this.getView().setModel(oComboBoxModel, "employeeModel");
 
                 // sap.m.MessageToast.show("Timesheet data fetched successfully.");
               } else {

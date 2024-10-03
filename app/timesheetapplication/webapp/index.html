@@ -23,6 +23,24 @@
         data-sap-ui-async="true"
         data-sap-ui-frameOptions="trusted"
     ></script>
+    <script>
+        // Function to show the busy indicator
+        function showBusyIndicator() {
+            sap.ui.require(["sap/ui/core/BusyIndicator"], function(BusyIndicator) {
+                BusyIndicator.show(0); // Show immediately
+
+                // Hide the BusyIndicator after 3 seconds
+                setTimeout(function() {
+                    BusyIndicator.hide();
+                }, 5000);
+            });
+        }
+
+        // Hook into the UI5 initialization event
+        sap.ui.getCore().attachInit(function () {
+            showBusyIndicator();
+        });
+    </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
     <div

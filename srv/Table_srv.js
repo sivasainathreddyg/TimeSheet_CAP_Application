@@ -371,8 +371,7 @@ module.exports = srv => {
             const existingHeader = await cds.run(
                 SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
             );
-    
-            if (existingHeader) {
+            if (existingHeader && existingHeader.STATUS==="Saved") {
                 // Delete existing timesheet data if already present
                 await cds.run(
                     DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
@@ -381,6 +380,7 @@ module.exports = srv => {
                     DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
                 );
             }
+        
     
             // Insert new header data
             await cds.run(

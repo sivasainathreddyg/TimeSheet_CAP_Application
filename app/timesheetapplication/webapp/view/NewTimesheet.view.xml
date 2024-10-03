@@ -76,7 +76,7 @@
                                 text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted Date:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved Date:' : 'Saved Date:'}" 
                                  textAlign="Center"
                                 />
-                                <Text text="{ostatusModel>/SubDate}"  class="sapUiTinyMarginBegin"  />
+                                <Text text="{path:'ostatusModel>/SubDate'}"  class="sapUiTinyMarginBegin"  />
                           </HBox>
 
                            <HBox id="substatusvisible" >
@@ -408,24 +408,31 @@
                             press="onSave"
                             class="sapUiTinyMarginEnd"
                             type="Accept"
+                            icon="sap-icon://save"
                         />
                         <Button
                         id="idsubmitforapproval"
                             text="Submit for Approval"
                             press="onSave"
                             type="Emphasized"
+                            icon="sap-icon://approvals"
                         />
                         <Button
                         id="iddelete"
                             text="Delete"
                             press="onDelete"
-                            type="Emphasized"
+                            type="Reject"
+                            icon="sap-icon://delete"
+                            
+                            
                         />
                         <Button
                         id="idapproval"
-                            text="Approved"
+                            text="Approve"
                             press="onApproved"
                             type="Emphasized"
+                            icon="sap-icon://approvals"
+                            
                         />
                     </OverflowToolbar>
                 </footer>

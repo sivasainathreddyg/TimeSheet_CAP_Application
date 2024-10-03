@@ -111,6 +111,16 @@ sap.ui.define(
 				// } else {
 				// 	that.sName=oEvent.getParameter("arguments").Name;
 				// }
+				var date = new Date(that.Sdate);
+
+				// Extract day, month, and year
+				var day = String(date.getDate()).padStart(2, '0');  // Add leading zero if needed
+				var month = String(date.getMonth() + 1).padStart(2, '0');  // Month is zero-indexed, so +1
+				var year = date.getFullYear();
+			
+				// Format the date as DD-MM-YYYY
+				var formattedDate = day + '-' + month + '-' + year;
+				
 				that.sName=oEvent.getParameter("arguments").Name;
 				// var oStatus = { Status: that.Status,
 				// 	SubName: that.sName
@@ -120,7 +130,7 @@ sap.ui.define(
 				this.getView().setModel(statusModel, "ostatusModel");
 				this.getView().getModel("ostatusModel").setProperty("/Status", that.Status); 
 				this.getView().getModel("ostatusModel").setProperty("/SubName",that.Ssubmit); 
-				this.getView().getModel("ostatusModel").setProperty("/SubDate", that.Sdate); 
+				this.getView().getModel("ostatusModel").setProperty("/SubDate", formattedDate); 
 
 				// that.Status = oEvent.getParameter("arguments").Status;
 				// var oStatus=that.Status;
@@ -904,7 +914,7 @@ sap.ui.define(
 				});
 			},
 			onHomePress: function () {
-				this.getOwnerComponent().getRouter().navTo("View")
+				this.getOwnerComponent().getRouter().navTo("RouteViewnenu")
 			},
 			onBackPressTimeSheetPage: function () {
 				this.getOwnerComponent().getRouter().navTo("Timesheetdata")
@@ -937,7 +947,9 @@ sap.ui.define(
 					success: function(oData) {
 						// Handle success
 						sap.m.MessageToast.show("Timesheet Approved successfully.");
-					},
+						this.getOwnerComponent().getRouter().navTo("Timesheetdata");
+						// this.getOwnerComponent().getRouter().navTo("Loginpage");
+					}.bind(this),
 					error: function(oError) {
 						// Handle error
 						sap.m.MessageBox.error("An error occurred while Approved the timesheet status.");
