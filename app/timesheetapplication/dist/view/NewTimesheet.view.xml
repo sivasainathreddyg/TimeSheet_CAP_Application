@@ -1,0 +1,442 @@
+<mvc:View
+    controllerName="timesheetapplication.controller.NewTimesheet"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+>
+    <App>
+        <pages>
+            <Page
+                title="Timesheet Allocations"
+                navButtonPress="onBackPressTimeSheetPage"
+                showNavButton="true"
+                
+            >
+                <headerContent>
+                    <Title
+                        text=""
+                        id="FullName"
+                        level="H1"
+                    />
+                    <core:Icon
+                        src="sap-icon://customer"
+                        size="150%"
+                        press="CustomerHeader"
+                        decorative="false"
+                        id="idUserIcon"
+                        color="#0000ff"
+                    >
+                        <core:layoutData>
+                            <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                    </core:Icon>
+                </headerContent>
+                <content>
+                    <!-- Navigation buttons and date range (sticky) -->
+                    <VBox
+                        class=""
+                        id="stickyHeader"
+                    >
+                        
+                        <HBox
+                            justifyContent="SpaceBetween"
+                            alignItems="Center"
+                            class=""
+                        >
+                            <HBox alignItems="Center">
+                                <Label
+                                    text="Date Range:"
+                                    class="sapUiTinyMarginEnd classLabelDtRng"
+                                />
+                                <ComboBox
+                                    id="dateRangeComboBox"
+                                    selectionChange="onDateRangeChange"
+                                    items="{/dateRanges}"
+                                    width="250px"
+                                >
+                                    <core:Item
+                                        key="{key}"
+                                        text="{text}"
+                                    />
+                                </ComboBox>
+                            </HBox>
+                          <HBox id="statusvisible">
+                          <Text
+                                text="Status:"
+                                 textAlign="Center"
+                              
+                                />
+                                <Text text="{ostatusModel>/Status}"  class="sapUiTinyMarginBegin"/>
+                          </HBox>
+
+                           <HBox id ="subdatevisible">
+                          <Text
+                                text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted Date:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved Date:' : 'Saved Date:'}" 
+                                 textAlign="Center"
+                                />
+                                <Text text="{path:'ostatusModel>/SubDate'}"  class="sapUiTinyMarginBegin"  />
+                          </HBox>
+
+                           <HBox id="substatusvisible" >
+                          <Text
+                            text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted By:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved By:' : ''}" 
+
+                                 textAlign="Center"
+                                />
+                                <Text text="{=${ostatusModel>/Status} === 'Saved' ? '' : ${ostatusModel>/SubName}}"  class="sapUiTinyMarginBegin" />
+                          </HBox>
+                            
+                            <HBox alignItems="Center">
+                                
+                                <Button
+                                    id="Addiconbtn"
+                                    icon="sap-icon://add"
+                                    press="onAddPress"
+                                    tooltip="Add New project"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                            </HBox>
+                        </HBox>
+                    </VBox>
+                    <!-- ScrollContainer for Table -->
+                    <ScrollContainer
+                        width="100%"
+                        height="calc(100vh - 200px)"
+                        horizontal="false"
+                        vertical="true"
+                    >
+                        <!-- Allocation table -->
+                        <Table
+                            id="allocationTable"
+                            items="{path: '/allocations'}"
+                        >
+                            <columns>
+                                <Column
+                                    width="14%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Project Type" />
+                                </Column>
+                                <Column
+                                    width="13%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Project Name" />
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Phase" />
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Begin"
+                                >
+                                    <Text text="Deliverable" />
+                                </Column>
+                                <!-- Days Columns -->
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Mon"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/0}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Tue"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/1}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Wed"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/2}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Thu"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/3}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Fri"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/4}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Sat"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/5}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="11%"
+                                    hAlign="Center"
+                                >
+                                    <VBox>
+                                        <Text
+                                            text="Sun"
+                                            textAlign="Center"
+                                        />
+                                        <Text text="{/dates/6}" />
+                                    </VBox>
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Total Hours" />
+                                </Column>
+                                <Column
+                                    width="10%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="Avail Hours" />
+                                </Column>
+                                <Column
+                                    width="3%"
+                                    hAlign="Center"
+                                >
+                                    <Text text="" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem class="customRowSpacing">
+                                    <cells>
+                                        <!-- Project Type ComboBox -->
+                                        <ComboBox
+                                            selectedKey="{Type}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select an option"
+                                        >
+                                            <core:Item
+                                                key="Project"
+                                                text="Project"
+                                            />
+                                            <core:Item
+                                                key="ProdSupply"
+                                                text="Prod. Supply"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- Project Name ComboBox -->
+                                        <ComboBox
+                                            selectedKey="{ProjectId}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select project name"
+                                            selectionChange="onProjectSelectionChange"
+                                            items="{
+                                                path: 'projectModel>/',
+                                                templateShareable: false
+                                                }"
+                                        >
+                                            <core:Item
+                                                key="{projectModel>PROJECTID}"
+                                                text="{projectModel>PROJECTNAME}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- Phase ComboBox -->
+                                        <ComboBox
+                                            selectedKey="{Phase}"
+                                             visible="{hidingProjNam}"
+                                            placeholder="Select a phase"
+                                        >
+                                            <core:Item
+                                                key="Build"
+                                                text="Build"
+                                            />
+                                            <core:Item
+                                                key="Design"
+                                                text="Design"
+                                            />
+                                            <core:Item
+                                                key="GoLiveAndCutover"
+                                                text="Go-Live and Cutover"
+                                            />
+                                            <core:Item
+                                                key="Hypercare"
+                                                text="Hypercare"
+                                            />
+                                            <core:Item
+                                                key="Planning"
+                                                text="Planning"
+                                            />
+                                            <core:Item
+                                                key="ProductionSupport"
+                                                text="Production Support"
+                                            />
+                                            <core:Item
+                                                key="Test"
+                                                text="Test"
+                                            />
+                                            <core:Item
+                                                key="Training"
+                                                text="Training"
+                                            />
+                                        </ComboBox>
+                                        <HBox>
+                                            <TextArea
+                                                id="descriptionInput"
+                                                width="100%"
+                                                value="{description}"
+                                                visible="{flags/hidingTextarea}"
+                                                placeholder="Enter description (up to 100 words)"
+                                                maxLength="1000"
+                                                liveChange="onDescriptionLiveChange"
+                                            />
+                                            <Text
+                                                text="Total:"
+                                                visible="{flags/hidingTotalInt}"
+                                            />
+                                        </HBox>
+
+                                        <!-- Hours Inputs -->
+                                        <Input
+                                            value="{hours/mon}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            
+                                        />
+                                        <Input
+                                            value="{hours/tue}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                          
+                                        />
+                                        <Input
+                                            value="{hours/wed}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                         
+                                        />
+                                        <Input
+                                            value="{hours/thu}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                           
+                                        />
+                                        <Input
+                                            value="{hours/fri}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                              
+                                        />
+                                        <Input
+                                            value="{hours/sat}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                            
+                                        />
+                                        <Input
+                                            value="{hours/sun}"
+                                            width="3rem"
+                                            change="onHoursChange"
+                                        />
+
+                                        <!-- Total Hours -->
+                                        <Text
+                                            text="{totalHours}"
+                                            textAlign="Center"
+                                        />
+                                        <Text
+                                            text="{AvailableHours}"
+                                            textAlign="Center"
+                                        />
+
+                                        <!-- Delete Button -->
+                                        <Button
+                                            icon="sap-icon://delete"
+                                            press=".onDeletePress"
+                                            type="Reject"
+                                            visible="{isDeleteButtonVisible}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                </content>
+                <footer>
+                    <OverflowToolbar>
+                        <ToolbarSpacer />
+                        <Button
+                        id="idsavebtn"
+                            text="Save"
+                            press="onSave"
+                            class="sapUiTinyMarginEnd"
+                            type="Accept"
+                            icon="sap-icon://save"
+                        />
+                        <Button
+                        id="idsubmitforapproval"
+                            text="Submit for Approval"
+                            press="onSave"
+                            type="Emphasized"
+                            icon="sap-icon://approvals"
+                        />
+                        <Button
+                        id="iddelete"
+                            text="Delete"
+                            press="onDelete"
+                            type="Reject"
+                            icon="sap-icon://delete"
+                            
+                            
+                        />
+                        <Button
+                        id="idapproval"
+                            text="Approve"
+                            press="onApproved"
+                            type="Emphasized"
+                            icon="sap-icon://approvals"
+                            
+                        />
+                    </OverflowToolbar>
+                </footer>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>

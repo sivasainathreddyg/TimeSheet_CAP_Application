@@ -23,6 +23,7 @@
     "watch-timesheetapplication": "cds watch --open timesheetapplication/webapp/index.html?sap-ui-xx-viewCache=false",
     "undeploy": "cf undeploy TIMESHEET --delete-services --delete-service-keys --delete-service-brokers",
     "build": "rimraf resources mta_archives && mbt build --mtar archive",
-    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-maintenanceapplications": "cds watch --open maintenanceapplications/webapp/index.html?sap-ui-xx-viewCache=false"
   }
 }

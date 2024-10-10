@@ -18,4 +18,5 @@ service CatalogService {
     function HolidayCheck(dates : String)                                                  returns String;
     function TimeSheetApproved(data : String)                                              returns String;
     function TimeSheetDelete(deleteddata : String)                                         returns String;
+    function CreateNewEmployeeDeatils(NewEmployeeData : String)                            returns String;
 }

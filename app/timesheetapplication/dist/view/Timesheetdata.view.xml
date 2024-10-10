@@ -1,0 +1,158 @@
+<mvc:View
+    xmlns:form="sap.ui.layout.form"
+    controllerName="timesheetapplication.controller.Timesheetdata"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <Page
+        id="pageid"
+        showFooter="true"
+    >
+        <customHeader class="sapUiNoMargin">
+            <Bar>
+                <contentLeft>
+                    <Button
+                        icon="sap-icon://home"
+                        press="onHomePress"
+                        tooltip="Home"
+                        text="Home"
+                        type="Emphasized"
+                    />
+                </contentLeft>
+                <contentMiddle>
+                    <Label
+                        text="Time Sheet"
+                        design="Bold"
+                        class=".classlabelTimesheet"
+                    />
+                </contentMiddle>
+                <contentRight>
+                    <Title
+                        text=""
+                        id="FullName"
+                        level="H1"
+                    />
+                    <core:Icon
+                        src="sap-icon://customer"
+                        size="150%"
+                        press="CustomerHeader"
+                        decorative="false"
+                        id="idUserIcon"
+                        color="#0000ff"
+                    >
+                        <core:layoutData>
+                            <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                    </core:Icon>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <VBox>
+            <!--<OverflowToolbar>-->
+            <!--	<Button icon="sap-icon://home" press="onHomePress" tooltip="Home"/>-->
+            <!--	<ToolbarSpacer/>-->
+            <!--	<Title text="Time Sheet" level="H1" textAlign="Center" class="classtitletimesheet"/>-->
+            <!--	<ToolbarSpacer/>-->
+            <!--	<Title text="" id="FullName" level="H1"/>-->
+            <!--	<core:Icon src="sap-icon://customer" size="150%" press="CustomerHeader" decorative="false" id="idUserIcon" color="#0000ff">-->
+            <!--		<core:layoutData>-->
+            <!--			<FlexItemData growFactor="1"/>-->
+            <!--		</core:layoutData>-->
+            <!--	</core:Icon>-->
+            <!--</OverflowToolbar>-->
+            <HBox
+                justifyContent="SpaceBetween"
+                alignItems="Center"
+            >
+                <Button
+                    id="NewTimeSheet"
+                    text="New Time Sheet"
+                    press="oncreatenewtimesheet"
+                    icon="sap-icon://add-activity"
+                    tooltip="Creating new Time Sheet"
+                    type="Emphasized"
+                />
+               
+                <ComboBox id="usersComboBox" selectionChange="onSelectusername"
+                items="{employeeModel>/employees}">
+                    <core:Item text="{employeeModel>name}" key="{employeeModel>name}" />
+                </ComboBox>
+
+            </HBox>
+            <Table
+                id="timesheetTable"
+                backgroundDesign="Transparent"
+                inset="false"
+                items="{timesheetModel>/timesheetData}"
+            >
+                <!--<headerToolbar>-->
+                <!--	<Toolbar>-->
+                <!--		<Title text="Timesheets"/>-->
+                <!--	</Toolbar>-->
+                <!--</headerToolbar>-->
+                <columns>
+                    <Column width="30%">
+                        <header>
+                            <Label text="Name" />
+                        </header>
+                    </Column>
+                    <Column width="30%">
+                        <header>
+                            <Label text="Period" />
+                        </header>
+                    </Column>
+                    <Column width="30%">
+                        <header>
+                            <Label text="Status" />
+                        </header>
+                    </Column>
+                     <Column>
+                        <header>
+                            <Label text=""  visible="false"/>
+                        </header>
+                    </Column>
+                     <Column>
+                        <header>
+                            <Label text="" visible="false" />
+                        </header>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem
+                        type="Navigation"
+                        press="onRowPress"
+                        class="classcolumlistitemhower"
+                    >
+                        <cells>
+                            <Text text="{timesheetModel>EMPLOYEENAME}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>PERIOD}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>STATUS}" class="cellTextClass"/>
+                            <Text text="{timesheetModel>DATE}" class="cellTextClass" visible="false"/>
+                            <Text text="{timesheetModel>SUBMITTEDBY}" class="cellTextClass" visible="false"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </VBox>
+        <footer>
+            <OverflowToolbar>
+                <Button
+                    id="Notificationbtn"
+                    icon="sap-icon://message-popup"
+                    press="handleMessagePopoverPress"
+                    tooltip="Show Messages"
+                >
+                    <customData>
+                        <BadgeCustomData
+                            key="Notifications"
+                            value=""
+                            visible="true"
+                        />
+                    </customData>
+                </Button>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

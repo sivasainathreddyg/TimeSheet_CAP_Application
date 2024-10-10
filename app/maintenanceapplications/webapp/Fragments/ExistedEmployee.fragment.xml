@@ -1,0 +1,37 @@
+
+
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified">
+    <!--<Dialog id="fileUploadDialog" title="Upload File" draggable="true" resizable="true" contentWidth="300px" class="sapUiContentPadding">-->
+   <Dialog id="existedEmployeeDialog" title="Edit Employee" draggable="true" resizable="true">
+    <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="Employee Details"/>
+                </contentLeft>
+                
+            </Bar>
+        </customHeader>
+        <content>
+            <f:SimpleForm>
+                <f:content>
+                <Label text="Enter Employee ID to Search" />
+
+            <Input id="searchEmployeeID" />
+            <Button text="Search" press="onSearchEmployee" />
+            <VBox id="employeeDetails" visible="false">
+            </VBox>
+                   
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="Submit" type="Emphasized" press="onEditEmployeeSubmit"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" type="Reject" press="onCancelEditEmployee"/>
+        </endButton>
+       
+    </Dialog>
+</core:FragmentDefinition>
+

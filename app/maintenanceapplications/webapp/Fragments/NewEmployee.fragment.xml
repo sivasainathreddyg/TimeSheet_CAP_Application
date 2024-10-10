@@ -1,0 +1,74 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified">
+    <!--<Dialog id="fileUploadDialog" title="Upload File" draggable="true" resizable="true" contentWidth="300px" class="sapUiContentPadding">-->
+   <Dialog id="newEmployeeDialogs" title="New Employee" draggable="true" resizable="true">
+    <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="New Employee"/>
+                </contentLeft>
+               
+            </Bar>
+        </customHeader>
+        <content>
+            <f:SimpleForm>
+                <f:content>
+              <Label text="EmployeeID" />
+            <Input value="{newEmployeeModel>/EmployeeID}" />
+            
+            <Label text="First Name" />
+            <Input value="{newEmployeeModel>/FirstName}" />
+            
+            <Label text="Last Name" />
+            <Input value="{newEmployeeModel>/LastName}" />
+            
+            <Label text="Designation" />
+            <Input value="{newEmployeeModel>/Designation}" />
+            
+            <Label text="Password" />
+            <Input value="{newEmployeeModel>/Password}" />
+            
+            <Label text="EmailID" />
+            <Input value="{newEmployeeModel>/EmailID}" />
+            
+            <Label text="Start Date" />
+            <DatePicker value="{newEmployeeModel>/StartDate}" />
+            
+            <Label text="End Date" />
+            <DatePicker value="{newEmployeeModel>/EndDate}" />
+            <Label text="Employee Status" />
+<ComboBox 
+    selectedKey="{newEmployeeModel>/EmployeeStatus}" 
+    id="employeeStatusComboBox">
+    <core:Item key="Active" text="Active" />
+    <core:Item key="Inactive" text="Inactive" />
+</ComboBox>
+            
+           <Label text="Employee Type" />
+<ComboBox 
+    selectedKey="{newEmployeeModel>/EmployeeType}" 
+    id="employeeTypeComboBox">
+    <core:Item key="Full-time" text="Full-time" />
+    <core:Item key="Part-time" text="Part-time" />
+    <core:Item key="Contractor" text="Contractor" />
+</ComboBox>
+
+            
+            <Label text="Manager Flag" />
+            <CheckBox selected="{newEmployeeModel>/ManagerFlag}" />
+                   
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="Submit" type="Emphasized" press="onNewEmployeeSubmit"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" type="Reject" press="onCancelNewEmployee"/>
+        </endButton>
+       
+    </Dialog>
+</core:FragmentDefinition>
+
+
+

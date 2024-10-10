@@ -157,6 +157,60 @@ module.exports = srv => {
             return req.error(500, 'Failed to update timesheet status: ' + error.message);
         }
     });
+    srv.on('CreateNewEmployeeDeatils', async (req) => {
+        // Parse the stringified JSON data
+        let parsedData;
+        
+        try {
+            // Parse the NewEmployeeData string to JSON
+            parsedData = JSON.parse(req.data.NewEmployeeData); 
+        } catch (error) {
+            return req.error(400, 'Invalid JSON data provided.');
+        }
+    
+        const {
+            EmployeeID, FirstName, LastName, Designation, Password, 
+            EmailID, StartDate, EndDate, EmployeeStatus, EmployeeType, 
+            ManagerFlag
+        } = parsedData;
+    
+        try {
+            // Step 1: Check if EmployeeID already exists in the EmployeeDetails table
+            const existingEmployee = await cds.transaction(req).run(
+                SELECT.one.from('TIMESHEETTABLE_EMPLOYEEDETAILS')
+                .where({ EmployeeID: EmployeeID })
+            );
+    
+            // If employee already exists, throw an error
+            if (existingEmployee) {
+                return req.error(400, `Employee with ID ${EmployeeID} already exists.`);
+            }
+    
+            // Step 2: If not, insert a new employee record into the EmployeeDetails table
+            await cds.transaction(req).run(
+                INSERT.into('TIMESHEETTABLE_EMPLOYEEDETAILS').entries({
+                    EmployeeID: EmployeeID,
+                    FirstName: FirstName,
+                    LastName: LastName,
+                    Designation: Designation,
+                    Password: Password,
+                    EmailID: EmailID,
+                    StartDate: StartDate,
+                    EndDate: EndDate,
+                    EmployeeStatus: EmployeeStatus,
+                    EmployeeType: EmployeeType,
+                    ManagerFlag: ManagerFlag
+                })
+            );
+    
+            // Step 3: Return success message
+            return 'Employee Details Created successfully';
+        } catch (error) {
+            return req.error(500, 'Failed to create employee details: ' + error.message);
+        }
+    });
+    
+    
 
 
     srv.on('TimeSheetDelete', async (req) => {

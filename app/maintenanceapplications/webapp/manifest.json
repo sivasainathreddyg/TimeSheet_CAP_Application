@@ -1,7 +1,7 @@
 {
   "_version": "1.65.0",
   "sap.app": {
-    "id": "timesheetapplication",
+    "id": "maintenanceapplications",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -12,8 +12,8 @@
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:basic",
-      "version": "1.14.5",
-      "toolsId": "740031d9-20ac-4b97-8c2d-b3447707d6bd"
+      "version": "1.15.1",
+      "toolsId": "6aa8b564-274e-46ec-89d8-8d315a049d44"
     },
     "dataSources": {
       "mainService": {
@@ -22,19 +22,6 @@
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
-        }
-      }
-    },
-    "crossNavigation": {
-      "inbounds": {
-        "object-display": {
-          "semanticObject": "object",
-          "action": "display",
-          "title": "{{flpTitle}}",
-          "signature": {
-            "parameters": {},
-            "additionalParameters": "allowed"
-          }
         }
       }
     }
@@ -58,16 +45,10 @@
   "sap.ui5": {
     "flexEnabled": true,
     "dependencies": {
-      "minUI5Version": "1.127.1",
+      "minUI5Version": "1.129.0",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {},
-        "sap.f": {},
-        "sap.suite.ui.generic.template": {},
-        "sap.ui.comp": {},
-        "sap.ui.generic.app": {},
-        "sap.ui.table": {},
-        "sap.ushell": {}
+        "sap.ui.core": {}
       }
     },
     "contentDensities": {
@@ -78,11 +59,8 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "timesheetapplication.i18n.i18n"
+          "bundleName": "maintenanceapplications.i18n.i18n"
         }
-      },
-      "oGmodel": {
-        "type": "sap.ui.model.json.JSONModel"
       },
       "oModel": {
         "dataSource": "mainService",
@@ -106,67 +84,35 @@
         "routerClass": "sap.m.routing.Router",
         "viewType": "XML",
         "async": true,
-        "viewPath": "timesheetapplication.view",
+        "viewPath": "maintenanceapplications.view",
         "controlAggregation": "pages",
         "controlId": "app",
         "clearControlAggregation": false
       },
       "routes": [
         {
-          "name": "RouteView",
-          "pattern": "",
+          "name": "RouteView1",
+          "pattern": ":?query:",
           "target": [
-            "TargetView"
-          ]
-        },
-        {
-          "name": "Timesheetdata",
-          "pattern": "Timesheetdata",
-          "target": [
-            "Timesheetdata"
-          ]
-        },
-        {
-          "name": "NewTimesheet",
-          "pattern": "NewTimesheet/{dateRange}/{Name}/{Status}/{submit}/{Sdate}",
-          "target": [
-            "NewTimesheet"
+            "TargetView1"
           ]
         }
       ],
       "targets": {
-        "TargetView": {
+        "TargetView1": {
           "viewType": "XML",
           "transition": "slide",
           "clearControlAggregation": false,
-          "viewId": "View",
-          "viewName": "View"
-        },
-        "Timesheetdata": {
-          "viewType": "XML",
-          "transition": "slide",
-          "clearControlAggregation": false,
-          "viewId": "Timesheetdata",
-          "viewName": "Timesheetdata"
-        },
-        "NewTimesheet": {
-          "viewType": "XML",
-          "transition": "slide",
-          "clearControlAggregation": false,
-          "viewId": "NewTimesheet",
-          "viewName": "NewTimesheet"
+          "viewId": "View1",
+          "viewName": "View1"
         }
       }
     },
     "rootView": {
-      "viewName": "timesheetapplication.view.App",
+      "viewName": "maintenanceapplications.view.App",
       "type": "XML",
       "async": true,
       "id": "App"
     }
-  },
-  "sap.cloud": {
-    "public": true,
-    "service": "TimeSheet"
   }
 }

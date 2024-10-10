@@ -1,0 +1,37 @@
+<mvc:View controllerName="maintenanceapplications.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout">
+
+    <Page id="page" title="Employee Management">
+        <content>
+            <VBox justifyContent="Center" alignItems="Center" height="100%">
+                <!-- Tiles for New Employee and Existed Employee -->
+                <HBox justifyContent="Center" alignItems="Center" width="50%">
+                    <GenericTile
+                        header="New Employee"
+                        press="onNewEmployeePress"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://add-employee" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+                    
+                
+                    
+                    <GenericTile
+                        header="Existed Employee"
+                        press="onExistedEmployeePress"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://employee" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
