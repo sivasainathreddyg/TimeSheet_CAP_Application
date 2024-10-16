@@ -15,18 +15,79 @@
         <content>
             <f:SimpleForm>
                 <f:content>
-                <Label text="Enter Employee ID to Search" />
+                <VBox id="searchEmployeeID">
+                <Label text="Enter Employee ID to Search" id ="searchEmployeelabel"/>
 
-            <Input id="searchEmployeeID" />
-            <Button text="Search" press="onSearchEmployee" />
-            <VBox id="employeeDetails" visible="false">
+            <Input id="searchEmployeeIDs" />
+            <Button text="Search" press="onSearchEmployee" id="searchbutton" />
             </VBox>
+            <VBox id="employeeDetails" visible="false">
+                    <Label text="EmployeeID" />
+                    <Input value="{newEmployeeModel>/EMPLOYEEID}" />
+
+                    <Label text="First Name" />
+                    <Input value="{newEmployeeModel>/FIRSTNAME}" />
+
+                    <Label text="Last Name" />
+                    <Input value="{newEmployeeModel>/LASTNAME}" />
+
+                    <Label text="Designation" />
+                    <Input value="{newEmployeeModel>/DESIGNATION}" />
+
+                    <Label text="Password" />
+                    <Input value="{newEmployeeModel>/PASSWORD}" />
+
+                    <Label text="EmailID" />
+                    <Input value="{newEmployeeModel>/EMAILID}" />
+
+                    <Label text="Start Date" />
+                    <DatePicker value="{newEmployeeModel>/STARTDATE}" />
+
+                    <Label text="End Date" />
+                    <DatePicker value="{newEmployeeModel>/ENDDATE}" />
+                    <Label text="Employee Status" />
+                    <ComboBox
+                        selectedKey="{newEmployeeModel>/EMPLOYEESTATUS}"
+                        id="employeeStatusComboBoxs"
+                    >
+                        <core:Item
+                            key="Active"
+                            text="Active"
+                        />
+                        <core:Item
+                            key="Inactive"
+                            text="Inactive"
+                        />
+                    </ComboBox>
+
+                    <Label text="Employee Type" />
+                    <ComboBox
+                        selectedKey="{newEmployeeModel>/EMPLOYEETYPE}"
+                        id="employeeTypeComboBoxs"
+                    >
+                        <core:Item
+                            key="Full-time"
+                            text="Full-time"
+                        />
+                        <core:Item
+                            key="Part-Time"
+                            text="Part-Time"
+                        />
+                        <core:Item
+                            key="Contractor"
+                            text="Contractor"
+                        />
+                    </ComboBox>
+
+                    <Label text="Manager Flag" />
+                    <CheckBox selected="{newEmployeeModel>/MANAGERFLAG}" />
+                    </VBox>
                    
                 </f:content>
             </f:SimpleForm>
         </content>
         <beginButton>
-            <Button text="Submit" type="Emphasized" press="onEditEmployeeSubmit"/>
+            <Button text="Update" type="Emphasized" press="onEmployeeUpdate"/>
         </beginButton>
         <endButton>
             <Button text="Cancel" type="Reject" press="onCancelEditEmployee"/>

@@ -19,4 +19,6 @@ service CatalogService {
     function TimeSheetApproved(data : String)                                              returns String;
     function TimeSheetDelete(deleteddata : String)                                         returns String;
     function CreateNewEmployeeDeatils(NewEmployeeData : String)                            returns String;
+    function retriveemployeedetails(employeeid : String)                                   returns String;
+    function UpdateEmployeeDeatils(updateemployeedata : String)                            returns String;
 }
