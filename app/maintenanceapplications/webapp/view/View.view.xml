@@ -1,15 +1,7 @@
-<!-- <mvc:View controllerName="timesheetapplication.controller.View"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-        <content />
-    </Page>
-</mvc:View> -->
-
-<mvc:View xmlns:form="sap.ui.layout.form" controllerName="timesheetapplication.controller.View" xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:form="sap.ui.layout.form" controllerName="maintenanceapplications.controller.View" xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true" xmlns="sap.m">
-	<Image src="images/image.png" alt="Logo" class="sbpTittleId"></Image>
-	<Text text="Streamline Your Timesheet" class="subTittletextClass"></Text>
+	<Image src="images/SBP-Logo-for-website-white-1.png" alt="Logo" class="sbpTittleId"></Image>
+	<Text text="Streamline Your Timesheet and Leave Management with SBPTimeSheet" class="subTittletextClass"></Text>
 	<HBox id="registationHbox" class="hboxClassId" width="600px">
 		<form:SimpleForm id="loginFormId">
 			

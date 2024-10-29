@@ -23,7 +23,7 @@
             </VBox>
             <VBox id="employeeDetails" visible="false">
                     <Label text="EmployeeID" />
-                    <Input value="{newEmployeeModel>/EMPLOYEEID}" />
+                    <Input value="{newEmployeeModel>/EMPLOYEEID}" editable="false"/>
 
                     <Label text="First Name" />
                     <Input value="{newEmployeeModel>/FIRSTNAME}" />

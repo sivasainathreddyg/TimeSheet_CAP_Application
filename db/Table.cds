@@ -23,13 +23,13 @@ entity TimeSheetHeader {
     key EmployeeName : String;
         Status       : String;
         Date         : Date;
-        SubmittedBy  : String; 
+        SubmittedBy  : String;
         EmployeeID   : Association to EmployeeDetails; // Association back to EmployeeDetails
 
 }
 
 entity TimeSheetItem {
-    key AUTO_INCREMENT_ID : Integer  ;
+    key AUTO_INCREMENT_ID : Integer;
         ProjectID         : Association to ProjectDetails;
         ProjectName       : String;
         ProjectType       : String;
@@ -46,7 +46,7 @@ entity TimeSheetItem {
         period            : String;
         EmployeeName      : String;
         TimeSheetID       : String;
-        AvailableHours:Integer;
+        AvailableHours    : Integer;
 }
 
 
@@ -80,17 +80,42 @@ entity TimeSheetItem {
 //     //  association to ProjectDetails on ProjectID = ProjectDetails.ProjectID;
 // }
 entity ProjectDetails {
-    key ProjectID      : UUID;
-        KY             : Int64;
-        ProjectName    : String;
-        Department     : String;
-        StartDate      : DateTime;
-        EndDate        : DateTime;
-        TotalHours     : Int16;
-        RemainingHours : Int16;
-        Status         : String;
-        projid         : Composition of many TimeSheetItem
-                             on projid.ProjectID = $self;
+    key ProjectID               : UUID;
+        KY                      : Int64;
+        ProjectName             : String;
+        Department              : String;
+        StartDate               : DateTime;
+        EndDate                 : DateTime;
+        TotalHours              : Int16;
+        RemainingHours          : Int16;
+        BilledHours             : Int16;
+        JanuaryHours            : Int16;
+        FebruaryHours           : Int16;
+        MarchHours              : Int16;
+        AprilHours              : Int16;
+        MayHours                : Int16;
+        JuneHours               : Int16;
+        JulyHours               : Int16;
+        AugustHours             : Int16;
+        SeptemberHours          : Int16;
+        OctoberHours            : Int16;
+        NovemberHours           : Int16;
+        DecemberHours           : Int16;
+        JanuaryHoursRemaining   : Int16;
+        FebruaryHoursRemaining  : Int16;
+        MarchHoursRemaining     : Int16;
+        AprilHoursRemaining     : Int16;
+        MayHoursRemaining       : Int16;
+        JuneHoursRemaining      : Int16;
+        JulyHoursRemaining      : Int16;
+        AugustHoursRemaining    : Int16;
+        SeptemberHoursRemaining : Int16;
+        OctoberHoursRemaining   : Int16;
+        NovemberHoursRemaining  : Int16;
+        DecemberHoursRemaining  : Int16;
+        Status                  : String;
+        projid                  : Composition of many TimeSheetItem
+                                      on projid.ProjectID = $self;
 }
 
 entity EmployeeProjectRelation {
@@ -122,7 +147,7 @@ entity ProjectKY {
 }
 
 entity ProjectKo {
-    key ProjectID      : UUID; 
+    key ProjectID      : UUID;
         StartDate      : DateTime;
         EndDate        : DateTime;
         TotalHours     : Int16;

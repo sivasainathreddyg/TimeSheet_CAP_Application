@@ -67,7 +67,8 @@
         "sap.ui.comp": {},
         "sap.ui.generic.app": {},
         "sap.ui.table": {},
-        "sap.ushell": {}
+        "sap.ushell": {},
+        "sap.viz": {}
       }
     },
     "contentDensities": {
@@ -120,6 +121,20 @@
           ]
         },
         {
+          "name": "Tileview",
+          "pattern": "Tileview",
+          "target": [
+            "Tileview"
+          ]
+        },
+        {
+          "name": "Analyticalpage",
+          "pattern": "Analyticalpage",
+          "target": [
+            "Analyticalpage"
+          ]
+        },
+        {
           "name": "Timesheetdata",
           "pattern": "Timesheetdata",
           "target": [
@@ -141,6 +156,20 @@
           "clearControlAggregation": false,
           "viewId": "View",
           "viewName": "View"
+        },
+        "Analyticalpage": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Analyticalpage",
+          "viewName": "Analyticalpage"
+        },
+        "Tileview": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Tileview",
+          "viewName": "Tileview"
         },
         "Timesheetdata": {
           "viewType": "XML",

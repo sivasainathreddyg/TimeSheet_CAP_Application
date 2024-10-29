@@ -101,11 +101,11 @@ sap.ui.define(
 				if (!that.oGmodel.oData['loggedInUser']) {
 					this.getOwnerComponent().getRouter().navTo("RouteView");
 					return;
-				  }
+				}
 				that.sDateRange = oEvent.getParameter("arguments").dateRange;
 				that.Status = oEvent.getParameter("arguments").Status;
-				that.Sdate=oEvent.getParameter("arguments").Sdate;
-				that.Ssubmit=oEvent.getParameter("arguments").submit;
+				that.Sdate = oEvent.getParameter("arguments").Sdate;
+				that.Ssubmit = oEvent.getParameter("arguments").submit;
 				// if (that.Status === "Approved") {
 				// 	that.sName=oEvent.getParameter("arguments").ApprovedByName ? oEvent.getParameter("arguments").ApprovedByName : '';
 				// } else {
@@ -117,28 +117,28 @@ sap.ui.define(
 				var day = String(date.getDate()).padStart(2, '0');  // Add leading zero if needed
 				var month = String(date.getMonth() + 1).padStart(2, '0');  // Month is zero-indexed, so +1
 				var year = date.getFullYear();
-			
+
 				// Format the date as DD-MM-YYYY
 				var formattedDate = day + '-' + month + '-' + year;
-				
-				that.sName=oEvent.getParameter("arguments").Name;
+
+				that.sName = oEvent.getParameter("arguments").Name;
 				// var oStatus = { Status: that.Status,
 				// 	SubName: that.sName
 				//  };
 				var statusModel = new sap.ui.model.json.JSONModel();
 				//statusModel.setData(oStatus); 
 				this.getView().setModel(statusModel, "ostatusModel");
-				this.getView().getModel("ostatusModel").setProperty("/Status", that.Status); 
-				this.getView().getModel("ostatusModel").setProperty("/SubName",that.Ssubmit); 
-				this.getView().getModel("ostatusModel").setProperty("/SubDate", formattedDate); 
+				this.getView().getModel("ostatusModel").setProperty("/Status", that.Status);
+				this.getView().getModel("ostatusModel").setProperty("/SubName", that.Ssubmit);
+				this.getView().getModel("ostatusModel").setProperty("/SubDate", formattedDate);
 
 				// that.Status = oEvent.getParameter("arguments").Status;
 				// var oStatus=that.Status;
 				// var statusModel = new sap.ui.model.json.JSONModel();
 				// statusModel.setData(oStatus);
 				// that.getView().setModel(statusModel, "ostatusModel");
-				
-				var ManagerFlag=that.oGmodel.oData.odata.MANAGERFLAG ;
+
+				var ManagerFlag = that.oGmodel.oData.odata.MANAGERFLAG;
 				var Employeename = this.oGmodel.oData.loggedInUser.FullName;
 				this.getView().byId("dateRangeComboBox").setSelectedKey("");
 
@@ -157,7 +157,7 @@ sap.ui.define(
 					this.getView().byId("statusvisible").setVisible(true);
 					this.getView().byId("subdatevisible").setVisible(true);
 					this.getView().byId("substatusvisible").setVisible(true);
-					
+
 				} else if (that.Status === "Saved") {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
 						.removeStyleClass("classFooterHidden")
@@ -172,7 +172,7 @@ sap.ui.define(
 					this.getView().byId("subdatevisible").setVisible(true);
 					this.getView().byId("substatusvisible").setVisible(true);
 					this.getView().byId("iddelete").setVisible(false);
-			
+
 					var sEmail = this.oGmodel.oData['loggedInUser'].Email;
 				} else if (that.Status === "Approved") {
 					this.getView().mAggregations.content[0].mAggregations.pages[0].mAggregations.footer
@@ -212,7 +212,7 @@ sap.ui.define(
 					this.getView().byId("iddelete").setVisible(false);
 					var sEmail = oEvent.getParameter("arguments").sEmail;
 					var Employeename = this.oGmodel.oData.loggedInUser.FullName;
-				}				
+				}
 				if (that.sDateRange === "D") {
 					var oModel = new JSONModel({
 						array: this.oGmodel.oData.odata.results
@@ -237,7 +237,7 @@ sap.ui.define(
 								sun: "0"
 							},
 							totalHours: "0",
-							AvailableHours:"0",
+							AvailableHours: "0",
 							hidingProjNam: true,
 							isDeleteButtonVisible: false,
 							flags: {
@@ -267,8 +267,8 @@ sap.ui.define(
 							}
 						}],
 						dateRanges: this.getDateRanges(),
-						dates: ["", "", "", "", "", "", ""] ,
-						isHoliday: { 
+						dates: ["", "", "", "", "", "", ""],
+						isHoliday: {
 							mon: true,
 							tue: true,
 							wed: true,
@@ -277,15 +277,15 @@ sap.ui.define(
 							sat: true,
 							sun: true
 						},
-						holidayName : {
-						mon: "",
-						tue: "",
-						wed: "",
-						thu: "",
-						fri: "",
-						sat: "",
-						sun: ""
-					},
+						holidayName: {
+							mon: "",
+							tue: "",
+							wed: "",
+							thu: "",
+							fri: "",
+							sat: "",
+							sun: ""
+						},
 					});
 					this.getView().setModel(that.oModel);
 
@@ -306,18 +306,18 @@ sap.ui.define(
 				}
 			},
 			onProjectSelectionChange: function (oEvent) {
-				var oModel = this.getOwnerComponent().getModel("oModel"); 
+				var oModel = this.getOwnerComponent().getModel("oModel");
 				var oSelectedItem = oEvent.getParameter("selectedItem");
 				var sSelectedKey = oSelectedItem.getKey();
 				var oParams = {
 					ProjectID: sSelectedKey
 				};
-				new Promise(function(resolve,reject){
+				new Promise(function (resolve, reject) {
 					oModel.callFunction("/AvailableHours", {
 						method: "GET",
 						urlParameters: oParams,
 						success: function (oData, response) {
-							var AvailHours = oData.AvailableHours.AvailableHours;   
+							var AvailHours = oData.AvailableHours.AvailableHours;
 							resolve(AvailHours)
 						},
 						error: function (err) {
@@ -326,15 +326,15 @@ sap.ui.define(
 						}
 					});
 				})
-				.then(function(AvailHours){
-					oEvent.getParameters().selectedItem.getBindingContext().getObject().AvailableHours = AvailHours;
-					this.getView().getModel().refresh(true);
-				}.bind(this))
-				.catch(function(err){
-					MessageToast.show("Error retrieving available hours:", err)
-				})
-				
-			},		
+					.then(function (AvailHours) {
+						oEvent.getParameters().selectedItem.getBindingContext().getObject().AvailableHours = AvailHours;
+						this.getView().getModel().refresh(true);
+					}.bind(this))
+					.catch(function (err) {
+						MessageToast.show("Error retrieving available hours:", err)
+					})
+
+			},
 			getDateRanges: function () {
 				that.dateRanges = [];
 				var today = new Date();
@@ -350,9 +350,9 @@ sap.ui.define(
 					var formattedStartDate = this._formatDate(startOfWeek);
 					var formattedEndDate = this._formatDate(endOfWeek);
 					var formattedText = `${formattedStartDate}, ${startOfWeek.getFullYear()} - ${formattedEndDate}, ${endOfWeek.getFullYear()}`;
-// startOfWeek.toISOString(),
+					// startOfWeek.toISOString(),
 					that.dateRanges.push({
-						key:formattedText,
+						key: formattedText,
 						text: formattedText
 					});
 					startDate.setDate(startDate.getDate() + 7);
@@ -398,7 +398,7 @@ sap.ui.define(
 
 			// 	oModel.setProperty("/dates", dates);
 			// },
-			 formatDateToISO:function(date) {
+			formatDateToISO: function (date) {
 				var year = date.getFullYear();
 				var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
 				var day = String(date.getDate()).padStart(2, '0');
@@ -409,7 +409,7 @@ sap.ui.define(
 				var Model = this.getView().getModel();
 				var currentStartDate = Model.getProperty("/currentStartDate");
 				var dates = [];
-				var isHoliday = { 
+				var isHoliday = {
 					mon: true,
 					tue: true,
 					wed: true,
@@ -428,7 +428,7 @@ sap.ui.define(
 					sun: ""
 				};
 				var dateArray = [];
-			
+
 				if (currentStartDate) {
 					for (var i = 0; i < 7; i++) {
 						var date = new Date(currentStartDate);
@@ -442,14 +442,14 @@ sap.ui.define(
 				} else {
 					dates = ["", "", "", "", "", "", ""];
 				}
-			
+
 				var jsonString = JSON.stringify(dateArray);
 				this.holidaycheck(jsonString, dateArray, dates, isHoliday, holidayName, Model);
 			},
-			
+
 			holidaycheck: function (dates, dateObjects, displayDates, isHoliday, holidayName, Model) {
 				var oModel = this.getOwnerComponent().getModel("oModel");
-			
+
 				oModel.callFunction("/HolidayCheck", {
 					method: "GET",
 					urlParameters: {
@@ -458,14 +458,14 @@ sap.ui.define(
 					success: function (oData, response) {
 						var holidays = JSON.parse(oData.HolidayCheck);
 						if (holidays.length > 0) {
-							holidays.forEach(function(holiday) {
+							holidays.forEach(function (holiday) {
 								var holidayDate = holiday.Date.split('T')[0];
 								var holidayNameValue = holiday.HoildayName;
-			
+
 								// Find the date in dateObjects and update isHoliday and holidayName fields
-								dateObjects.forEach(function(dateObj, index) {
+								dateObjects.forEach(function (dateObj, index) {
 									if (dateObj.date === holidayDate) {
-										switch(index) {
+										switch (index) {
 											case 0: isHoliday.mon = false; holidayName.mon = holidayNameValue; break;
 											case 1: isHoliday.tue = false; holidayName.tue = holidayNameValue; break;
 											case 2: isHoliday.wed = false; holidayName.wed = holidayNameValue; break;
@@ -478,7 +478,7 @@ sap.ui.define(
 								});
 							});
 						}
-			
+
 						// Set the dates, isHoliday, and holidayName properties in the model
 						Model.setProperty("/dates", displayDates);
 						Model.setProperty("/isHoliday", isHoliday);
@@ -489,7 +489,7 @@ sap.ui.define(
 					}
 				});
 			},
-				
+
 
 			onAddPress: function () {
 				var oNewRow = {
@@ -507,7 +507,7 @@ sap.ui.define(
 						sun: "0"
 					},
 					totalHours: "0",
-					AvailableHours:"0",
+					AvailableHours: "0",
 					hidingProjNam: true,
 					flags: {
 						hidingTextarea: true,
@@ -568,7 +568,7 @@ sap.ui.define(
 				this.byId("passwordInput").setValue("");
 			},
 
-			
+
 			loadData: function () {
 				var oModel = this.getOwnerComponent().getModel("oModel");
 				that.view = this.getView();
@@ -581,7 +581,7 @@ sap.ui.define(
 				var oParams = {
 					EmployeeName: that.sName,
 					period: that.sDateRange,
-					Status:that.Status
+					Status: that.Status
 				};
 				// Assuming the response contains the stringified data
 				oModel.callFunction("/RetriveTimeSheetdata", {
@@ -613,7 +613,7 @@ sap.ui.define(
 									sun: "0"
 								},
 								totalHours: "0",
-								AvailableHours:"0",
+								AvailableHours: "0",
 								hidingProjNam: true,
 								isDeleteButtonVisible: false,
 								flags: {
@@ -626,7 +626,7 @@ sap.ui.define(
 							var oTimesheetModel = new JSONModel({
 								currentStartDate: this.sDateRange,
 								dates: ["", "", "", "", "", "", ""], // Set this as required
-								isHoliday: { 
+								isHoliday: {
 									mon: true,
 									tue: true,
 									wed: true,
@@ -659,7 +659,7 @@ sap.ui.define(
 									sun: item.SUNDAY || "0"
 								},
 								totalHours: item.WORKINGHOURS || "0",
-								AvailableHours:item.AVAILABLEHOURS,
+								AvailableHours: item.AVAILABLEHOURS,
 								hidingProjNam: true,
 								isDeleteButtonVisible: false,
 								flags: {
@@ -758,7 +758,7 @@ sap.ui.define(
 						});
 
 						that.view.setModel(oTimesheetModel);
-						 that.view.byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
+						that.view.byId("dateRangeComboBox").setSelectedKey(that.sDateRange);
 						setTimeout(function () {
 							that.busyDialog.close();
 						}, 3000);
@@ -919,7 +919,7 @@ sap.ui.define(
 			onBackPressTimeSheetPage: function () {
 				this.getOwnerComponent().getRouter().navTo("Timesheetdata")
 			},
-			onApproved: function() {
+			onApproved: function () {
 				var data = this.getOwnerComponent().getModel("oGmodel");
 				var FullName = data.oData['loggedInUser'].FullName;
 				var now = new Date();
@@ -927,49 +927,49 @@ sap.ui.define(
 				var month = String(now.getMonth() + 1).padStart(2, '0');
 				var day = String(now.getDate()).padStart(2, '0');
 				var formatedDate = year + '-' + month + '-' + day;
-				var Status = "Approved"; 			
+				var Status = "Approved";
 				var detailsForApproved = {
 					Status: Status,
 					EmpName: that.sName,
 					Period: that.sDateRange,
-					sDate:formatedDate,
-					sSubmittedby:FullName
+					sDate: formatedDate,
+					sSubmittedby: FullName
 				};
-			
+
 				// Stringify the data
 				var jsonData = JSON.stringify(detailsForApproved);
-			
+
 				var oModel = this.getOwnerComponent().getModel("oModel");
-			
+
 				oModel.callFunction("/TimeSheetApproved", {
 					method: "GET",
 					urlParameters: { data: jsonData },
-					success: function(oData) {
+					success: function (oData) {
 						// Handle success
 						sap.m.MessageToast.show("Timesheet Approved successfully.");
 						this.getOwnerComponent().getRouter().navTo("Timesheetdata");
 						// this.getOwnerComponent().getRouter().navTo("Loginpage");
 					}.bind(this),
-					error: function(oError) {
+					error: function (oError) {
 						// Handle error
 						sap.m.MessageBox.error("An error occurred while Approved the timesheet status.");
 					}
 				});
 			},
-			onDelete:function(){
+			onDelete: function () {
 				var detailsForDelete = {
 					Period: that.sDateRange,
 					EmpName: that.sName
 				};
-				var jsonData=JSON.stringify(detailsForDelete);
-				var oModel=this.getOwnerComponent().getModel("oModel");
-				oModel.callFunction("/TimeSheetDelete",{
+				var jsonData = JSON.stringify(detailsForDelete);
+				var oModel = this.getOwnerComponent().getModel("oModel");
+				oModel.callFunction("/TimeSheetDelete", {
 					method: "GET",
-					urlParameters: {deleteddata:jsonData},
-					success:function(odata){
+					urlParameters: { deleteddata: jsonData },
+					success: function (odata) {
 						sap.m.MessageToast.show("Time Deleted successfully")
 					},
-					error:function(err){
+					error: function (err) {
 						sap.m.MessageBox.error("An error occurred while Deleting the timesheet status.")
 					}
 				})
@@ -986,13 +986,13 @@ sap.ui.define(
 			// 	var sEmail = data.oData['loggedInUser'].Email;
 			// 	var sDateRange = this.byId("dateRangeComboBox").getSelectedItem() ? this.byId("dateRangeComboBox").getSelectedItem().getKey() : "";
 			// 	var sFullName = data.oData.loggedInUser.FullName;
-			
+
 			// 	// First validation: Check if the date range is selected
 			// 	if (!sDateRange) {
 			// 		sap.m.MessageBox.error("Please select a date range before submitting.");
 			// 		return;
 			// 	}
-			
+
 			// 	var now = new Date();
 			// 	var year = now.getFullYear();
 			// 	var month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1002,7 +1002,7 @@ sap.ui.define(
 			// 	var seconds = String(now.getSeconds()).padStart(2, '0');
 			// 	var timesheetId = `T${year}${month}${day}${hours}${minutes}${seconds}`;
 			// 	var formatedDate = year + '-' + month + '-' + day;
-			
+
 			// 	// Create the Header data object
 			// 	var oHeader = {
 			// 		TIMESHEETID: timesheetId,
@@ -1012,41 +1012,41 @@ sap.ui.define(
 			// 		DATE: formatedDate,
 			// 		EMPLOYEEID_EMPLOYEEID: that.sEmpID
 			// 	};
-			
+
 			// 	// Collect data from the table
 			// 	var aItemsData = [];
 			// 	var oTable = this.byId("allocationTable");
 			// 	var aItems = oTable.getItems();
-			
+
 			// 	for (var i = 0; i < aItems.length; i++) {
 			// 		var oItem = aItems[i];
 			// 		var oCells = oItem.getCells();
 			// 		var uniqueID = Date.now() % 1000000000 + Math.floor(Math.random() * 1000);
-			
+
 			// 		var totalHours = parseInt(oCells[11].getText(), 10) || 0;
 			// 		var availableHours = parseInt(oCells[12].getText(), 10) || 0;
 			// 		var remainingHours = availableHours; 
-			
+
 			// 		if (operation === "Submitted" && i < aItems.length - 1) {
 			// 			remainingHours = availableHours - totalHours;
 			// 		}
-			
+
 			// 		// Second validation: Check Project Type, Project Name, and Project Phase
-					// var sProjectType = oCells[0].getSelectedKey();
-					// var sProjectName = oCells[1].getSelectedKey();
-					// var sProjectPhase = oCells[2].getSelectedKey();
-			
-					// if (!sProjectType || !sProjectName || !sProjectPhase) {
-					// 	sap.m.MessageBox.error("Please select Project Type, Project Name, and Project Phase for all entries.");
-					// 	return;  // Stop submission if validation fails
-					// }
-			
+			// var sProjectType = oCells[0].getSelectedKey();
+			// var sProjectName = oCells[1].getSelectedKey();
+			// var sProjectPhase = oCells[2].getSelectedKey();
+
+			// if (!sProjectType || !sProjectName || !sProjectPhase) {
+			// 	sap.m.MessageBox.error("Please select Project Type, Project Name, and Project Phase for all entries.");
+			// 	return;  // Stop submission if validation fails
+			// }
+
 			// 		// Existing validation: Check working hours vs available hours
 			// 		if (i !== aItems.length - 1 && totalHours > availableHours) {
 			// 			sap.m.MessageBox.error("Working Hours is greater than available hours for one of the entries.");
 			// 			return;
 			// 		}
-			
+
 			// 		// Create entry for the table item
 			// 		var oEntry = {
 			// 			AUTO_INCREMENT_ID: uniqueID,
@@ -1070,14 +1070,14 @@ sap.ui.define(
 			// 		};
 			// 		aItemsData.push(oEntry);
 			// 	}
-			
+
 			// 	// Prepare the payload by stringifying the objects
 			// 	var oPayload = {
 			// 		headerData: JSON.stringify(oHeader),
 			// 		itemsData: JSON.stringify(aItemsData),
 			// 		period: that.sDateRange
 			// 	};
-			
+
 			// 	// Get the OData model and call the function
 			// 	var oModel = this.getOwnerComponent().getModel("oModel");
 			// 	oModel.callFunction("/TimeSheetSubmit", {
@@ -1094,12 +1094,12 @@ sap.ui.define(
 			// 		}
 			// 	});
 			// },	
-			
+
 			submit: function (operation) {
 				var oView = this.getView();
 				var data = this.getOwnerComponent().getModel("oGmodel");
 				var sEmail = data.oData['loggedInUser'].Email;
-				that.sEmpID=data.oData.odata.EMPLOYEEID;
+				that.sEmpID = data.oData.odata.EMPLOYEEID;
 				var sDateRange = this.byId("dateRangeComboBox").getSelectedItem() ? this.byId("dateRangeComboBox").getSelectedItem().getKey() : "";
 				var sFullName = data.oData.loggedInUser.FullName;
 				var now = new Date();
@@ -1111,85 +1111,162 @@ sap.ui.define(
 				var seconds = String(now.getSeconds()).padStart(2, '0');
 				var timesheetId = `T${year}${month}${day}${hours}${minutes}${seconds}`;
 				var formatedDate = year + '-' + month + '-' + day;
-			
+
 				// Create the Header data object
 				if (!sDateRange) {
 					sap.m.MessageBox.error("Please select a date range before submitting.");
 					return;
 				}
-			
+
 				var oHeader = {
 					TIMESHEETID: timesheetId,
 					PERIOD: sDateRange,
 					EMPLOYEENAME: sFullName,
-					SUBMITTEDBY:sFullName,
+					SUBMITTEDBY: sFullName,
 					STATUS: operation,
 					DATE: formatedDate,
 					EMPLOYEEID_EMPLOYEEID: that.sEmpID
 				};
-			
+				// var daterange = "Aug 19, 2024 - sep 25, 2024";
+				var dates = sDateRange.split("-");
+				var startdate = new Date(dates[0]);
+				var enddate = new Date(dates[1]);
+				var startmonth = startdate.getMonth();
+				var endmonth = enddate.getMonth();
+
+				var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				var startMonthName = monthNames[startmonth];
+				var endMonthName = monthNames[endmonth];
+				var monthdata = {
+					startmonth: startMonthName,
+					endmonth: endMonthName
+				}
+				if (startmonth !== endmonth) {
+					const daysInMonth = {
+						Jan: 31, Feb: 28, Mar: 31, Apr: 30, May: 31, Jun: 30, Jul: 31, Aug: 31, Sep: 30, Oct: 31, Nov: 30, Dec: 31
+					};
+					var startdateParts = dates[0].trim().split(" ");
+					var enddateParts = dates[1].trim().split(" ");
+					var startmonthday = startdateParts[0];
+					// var endmonthday=enddateParts[0];
+					var startmonthdate = parseInt(startdateParts[1]);
+						var endmonthdate = parseInt(enddateParts[1]);
+						var monthdaysstart = daysInMonth[startmonthday] - startmonthdate + 1;
+						var monthdayend = endmonthdate;
+						var oTable = this.byId("allocationTable");
+						var aItems = oTable.getItems();
+
+						// Object to track project hours
+						var projectHourMap = {};
+						for (var i = 0; i < aItems.length-1; i++) {
+							var oItem = aItems[i];
+							var oCells = oItem.getCells();
+							var projectName = oCells[1].getSelectedKey(); // Get the project name/key
+							
+							// Array to store the day values (Monday to Sunday)
+							var weekHours = [
+								parseInt(oCells[4].getValue(), 10) || 0, // Monday
+								parseInt(oCells[5].getValue(), 10) || 0, // Tuesday
+								parseInt(oCells[6].getValue(), 10) || 0, // Wednesday
+								parseInt(oCells[7].getValue(), 10) || 0, // Thursday
+								parseInt(oCells[8].getValue(), 10) || 0, // Friday
+								parseInt(oCells[9].getValue(), 10) || 0, // Saturday
+								parseInt(oCells[10].getValue(), 10) || 0 // Sunday
+							];
+							
+							// Initialize the total hours for the project
+							var firstMonthTotalHours = 0;
+							var secondMonthTotalHours = 0;
+							
+							// Loop to calculate the total hours for the first month (remaining days of the first month)
+							for (var dayIndex = 0; dayIndex < monthdaysstart; dayIndex++) {
+								firstMonthTotalHours += weekHours[dayIndex];
+							}
+							
+							// Loop to calculate the total hours for the second month (days in the second month)
+							for (var dayIndex = 0; dayIndex < monthdayend; dayIndex++) {
+								secondMonthTotalHours += weekHours[monthdaysstart + dayIndex];
+							}
+							
+							// Check if the projectName already exists in the map
+							if (!projectHourMap[projectName]) {
+								// Initialize the project with empty arrays for both months
+								projectHourMap[projectName] = { 
+									firstMonthHours: 0, 
+									secondMonthHours: 0 
+								};
+							}
+							
+							// Add the calculated hours to the respective month totals for this project
+							projectHourMap[projectName].firstMonthHours += firstMonthTotalHours;
+							projectHourMap[projectName].secondMonthHours += secondMonthTotalHours;
+						}
+						
+					}
+
+
 				// Collect data from the table
 				var aItemsData = [];
 				var oTable = this.byId("allocationTable");
 				var aItems = oTable.getItems();
-			
+
 				// Object to track project hours
 				var projectHoursMap = {};
-			
+
 				for (var i = 0; i < aItems.length; i++) {
 					var oItem = aItems[i];
 					var oCells = oItem.getCells();
 					var uniqueID = Date.now() % 1000000000 + Math.floor(Math.random() * 1000);
-			
+
 					var totalHours = parseInt(oCells[11].getText(), 10) || 0;
 					var availableHours = parseInt(oCells[12].getText(), 10) || 0;
 
-					var remainingHours ; 
-			
+					var remainingHours;
+
 					if (operation === "Submitted" && i < aItems.length - 1) {
-						
+
 						remainingHours = availableHours - totalHours;
 					}
-					if( i !== aItems.length-1){
-			
-					// Combine total hours for entries with the same project
-					var projectName = oCells[1].getSelectedKey(); // Assuming column 1 is Project Name
-					
-					if (!projectName) {
-						sap.m.MessageBox.error("Please select Project Name before submitting.");
-						return;
+					if (i !== aItems.length - 1) {
+
+						// Combine total hours for entries with the same project
+						var projectName = oCells[1].getSelectedKey(); // Assuming column 1 is Project Name
+
+						if (!projectName) {
+							sap.m.MessageBox.error("Please select Project Name before submitting.");
+							return;
+						}
+
+						if (!projectHoursMap[projectName]) {
+							projectHoursMap[projectName] = {
+								totalHours: 0,
+								availableHour: availableHours
+							};
+						}
+
+						projectHoursMap[projectName].totalHours += totalHours;
+
+						// Ensure the total combined hours do not exceed available hours
+						if (projectHoursMap[projectName].totalHours > projectHoursMap[projectName].availableHour) {
+							sap.m.MessageBox.error("Combined working hours exceed available hours for project: " + oCells[1].getSelectedItem().getText());
+							return;
+						}
+
+						// Collect other required data
+						var sProjectType = oCells[0].getSelectedKey();
+						var sProjectPhase = oCells[2].getSelectedKey();
+
+						if (!sProjectType) {
+							sap.m.MessageBox.error("Please select Project Type before submitting.");
+							return;
+						}
+
+						if (!sProjectPhase) {
+							sap.m.MessageBox.error("Please select Project Phase before submitting.");
+							return;
+						}
 					}
-					
-					if (!projectHoursMap[projectName]) {
-						projectHoursMap[projectName] = {
-							totalHours: 0,
-							availableHour: availableHours
-						};
-					}
-			
-					projectHoursMap[projectName].totalHours += totalHours;
-			
-					// Ensure the total combined hours do not exceed available hours
-					if (projectHoursMap[projectName].totalHours > projectHoursMap[projectName].availableHour) {
-						sap.m.MessageBox.error("Combined working hours exceed available hours for project: " + oCells[1].getSelectedItem().getText());
-						return;
-					}
-			
-					// Collect other required data
-					var sProjectType = oCells[0].getSelectedKey();
-					var sProjectPhase = oCells[2].getSelectedKey();
-			
-					if (!sProjectType) {
-						sap.m.MessageBox.error("Please select Project Type before submitting.");
-						return;
-					}
-					
-					if (!sProjectPhase) {
-						sap.m.MessageBox.error("Please select Project Phase before submitting.");
-						return;
-					}
-				}
-			
+
 					var oEntry = {
 						AUTO_INCREMENT_ID: uniqueID,
 						TIMESHEETID: timesheetId,
@@ -1208,18 +1285,22 @@ sap.ui.define(
 						SATURDAY: parseInt(oCells[9].getValue(), 10) || 0,
 						SUNDAY: parseInt(oCells[10].getValue(), 10) || 0,
 						WORKINGHOURS: totalHours,
-						AvailableHours:availableHours					};
-			
+						AvailableHours: availableHours
+					};
+
 					aItemsData.push(oEntry);
 				}
-			
+
 				// Prepare the payload by stringifying the objects
 				var oPayload = {
 					headerData: JSON.stringify(oHeader),
 					itemsData: JSON.stringify(aItemsData),
+					Monthdata: JSON.stringify(monthdata),
+					projecthourdata:JSON.stringify(projectHourMap)|| 0,
 					period: sDateRange
 				};
-			
+				
+
 				// Get the OData model and call the function
 				var oModel = this.getOwnerComponent().getModel("oModel");
 				oModel.callFunction("/TimeSheetSubmit", {
@@ -1228,7 +1309,7 @@ sap.ui.define(
 						if (oData.TimeSheetSubmit.status === "Error") {
 							sap.m.MessageBox.error("TimeSheet already submitted for this time period");
 						} else {
-							MessageToast.show("Timesheet" +operation+ " successfully!");
+							MessageToast.show("Timesheet" + operation + " successfully!");
 						}
 					},
 					error: function (oError) {
@@ -1236,7 +1317,7 @@ sap.ui.define(
 					}
 				});
 			}
-			
+
 
 			// submit: function (operation) {
 			// 	var oView = this.getView();
@@ -1259,7 +1340,7 @@ sap.ui.define(
 			// 			sap.m.MessageBox.error("Please select a date range before submitting.");
 			// 			return;
 			// 		}
-				
+
 			// 	var oHeader = {
 			// 		TIMESHEETID: timesheetId,
 			// 		PERIOD: sDateRange,
@@ -1282,9 +1363,9 @@ sap.ui.define(
 			// 		var totalHours = parseInt(oCells[11].getText(), 10) || 0;
 			// 		var availableHours = parseInt(oCells[12].getText(), 10) || 0;
 			// 		var remainingHours = availableHours; 
-			
+
 			// 		if (operation === "Submitted" && i < aItems.length - 1) {
-						
+
 			// 			remainingHours = availableHours - totalHours;
 			// 		}
 			// 		// for(var j=0;j< aItems.length - 1;j++){
@@ -1294,31 +1375,31 @@ sap.ui.define(
 			// 				// MessageToast.show("WorkingHours is greater than available hours for one of the entries.");
 			// 				return; 
 			// 			}
-					
+
 
 			// 		var sProjectType = oCells[0].getSelectedKey();
 			// 		var sProjectName = oCells[1].getSelectedKey();
 			// 		var sProjectPhase = oCells[2].getSelectedKey();
-			
+
 			// 		if (!sProjectType ) {
 			// 			sap.m.MessageBox.error("Please select Project Type before submitting.");
 			// 			return;  
 			// 		}
-					
+
 			// 		if ( !sProjectName) {
 			// 			sap.m.MessageBox.error("Please select Project Name before submitting.");
 			// 			return;  
 			// 		}
-					
+
 			// 		if ( !sProjectPhase) {
 			// 			sap.m.MessageBox.error("Please  Project Phase before submitting.");
 			// 			return;  
 			// 		}
 			// 	}
-					
+
 
 			// 		// }
-					
+
 			// 		var oEntry = {
 			// 			AUTO_INCREMENT_ID: uniqueID,
 			// 			TIMESHEETID: timesheetId,

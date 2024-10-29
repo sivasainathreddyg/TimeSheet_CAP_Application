@@ -7,7 +7,7 @@
     <Page id="page" title="Employee Management">
         <content>
             <VBox justifyContent="Center" alignItems="Center" height="100%">
-                <!-- Tiles for New Employee and Existed Employee -->
+               
                 <HBox justifyContent="Center" alignItems="Center" width="50%">
                     <GenericTile
                         header="New Employee"
@@ -28,6 +28,15 @@
                         class="sapUiTinyMargin">
                         <TileContent>
                             <core:Icon src="sap-icon://employee" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+                    <GenericTile
+                        header="New Project"
+                        press="onNewproject"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://create-form" size="2rem" />
                         </TileContent>
                     </GenericTile>
                 </HBox>

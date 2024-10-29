@@ -92,11 +92,19 @@
       "routes": [
         {
           "name": "RouteView1",
-          "pattern": ":?query:",
+          "pattern": "RouteView1",
           "target": [
             "TargetView1"
           ]
+        },
+        {
+          "name": "View",
+          "pattern": "",
+          "target": [
+            "TargetView"
+          ]
         }
+        
       ],
       "targets": {
         "TargetView1": {
@@ -105,6 +113,13 @@
           "clearControlAggregation": false,
           "viewId": "View1",
           "viewName": "View1"
+        },
+        "TargetView": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "View",
+          "viewName": "View"
         }
       }
     },

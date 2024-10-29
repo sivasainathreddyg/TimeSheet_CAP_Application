@@ -1,0 +1,32 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:core="sap.ui.core"
+    controllerName="timesheetapplication.controller.Analyticalpage"
+>
+    <VBox>
+        <!-- ComboBox for Project Selection -->
+        <HBox>
+            <Text text="" width="13%" textAlign="Center" />
+            <ComboBox
+                selectedKey="{projectModel>/PROJECTID}"
+                visible="{hidingProjNam}"
+                placeholder="Select project name"
+                selectionChange="onProjectSelectionChange"
+                items="{
+                    path: 'projectModel>/',
+                    templateShareable: false
+                }"
+            >
+                <core:Item
+                    key="{projectModel>PROJECTID}"
+                    text="{projectModel>PROJECTNAME}"
+                />
+            </ComboBox>
+        </HBox>
+
+        <!-- Container for Dynamic Charts -->
+        <VBox id="chartContainer" />
+    </VBox>
+</mvc:View>

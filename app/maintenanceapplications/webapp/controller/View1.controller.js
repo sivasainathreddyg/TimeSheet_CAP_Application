@@ -16,7 +16,8 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment"
+    "sap/ui/core/Fragment",
+    "sap/m/MessageBox"
 ], function (Controller, JSONModel, Fragment) {
     "use strict";
 
@@ -24,6 +25,7 @@ sap.ui.define([
 
         onInit: function () {
             this.getView().setModel(new JSONModel(), "newEmployeeModel");
+            this.getView().setModel(new JSONModel(),"newprojectModel");
         },
 
         // When "New Employee" button is pressed
@@ -33,6 +35,104 @@ sap.ui.define([
                 this.getView().addDependent(this.newEmployeeDialog);
             }
             this.newEmployeeDialog.open();
+        },
+        onNewproject:function(){
+            if(!this.newprojectdetailDialog){
+                this.newprojectdetailDialog=sap.ui.xmlfragment("maintenanceapplications.Fragments.projectdetails",this);
+                this.getView().addDependent(this.newprojectdetailDialog);
+            }
+            this.newprojectdetailDialog.open();
+
+        },
+        onCancelprojectdetails:function(){
+            this.newprojectdetailDialog.close();
+        },
+        
+        onNewprojectSubmit:function(){
+            var DateFormat = sap.ui.core.format.DateFormat.getInstance({
+                pattern: "yyyy-MM-dd", // Desired date format
+                strictParsing: true
+            });
+            var oModel=this.getView().getModel('newprojectModel').getData();
+            if (!oModel.ProjectID ||  !oModel.EmployeeStatus || !oModel.KY ||
+                !oModel.ProjectName || !oModel.Department || !oModel.StartDate || !oModel.EndDate ||
+                !oModel.TotalHours || !oModel.RemainingHours) {
+
+                // Show error message if any required field is empty
+                sap.m.MessageBox.error("Please fill in all required fields.");
+                return;
+            }
+
+            // Check if StartDate and EndDate are strings or Date objects
+            var startDate = oModel.StartDate;
+            var endDate = oModel.EndDate;
+
+            // If the dates are strings like "MM/DD/YY", parse them into JavaScript Date objects
+            if (typeof startDate === "string") {
+                startDate = new Date(startDate); // Convert string to Date object
+            }
+            if (typeof endDate === "string") {
+                endDate = new Date(endDate); // Convert string to Date object
+            }
+
+            // Format start and end dates (only if they exist)
+            var formattedStartDate = startDate ? DateFormat.format(startDate) : "";
+            var formattedEndDate = endDate ? DateFormat.format(endDate) : "";
+
+            // Collect new employee data
+            var newprojectdetailsData = {
+                ProjectID: oModel.ProjectID,
+                Status: oModel.EmployeeStatus,
+                KY: oModel.KY,
+                ProjectName: oModel.ProjectName,
+                Department: oModel.Department,
+                StartDate: formattedStartDate, // Use formatted date
+                EndDate: formattedEndDate,     // Use formatted date
+                TotalHours: oModel.TotalHours,
+                RemainingHours: oModel.RemainingHours,
+                
+            };
+
+            // Stringify the collected data
+            var jsonString = JSON.stringify(newprojectdetailsData);
+
+            var oModel = this.getOwnerComponent().getModel("oModel");
+
+            oModel.callFunction("/CreateNewProject", {
+                method: "GET",
+                urlParameters: { Newprojectdetailsdata: jsonString },
+                success: function (oData) {
+                    // Handle success
+                    sap.m.MessageToast.show("Employee Details Created successfully.");
+
+                    // Close the dialog
+                    this.newEmployeeDialog.close();
+                    
+
+                    // Clear the form values by resetting the model data
+                    var newprojectModel = this.getView().getModel('newprojectModel');
+                    newprojectModel.setData({
+                        ProjectID: "",
+                        Status: "",
+                        KY: "",
+                        ProjectName: "",
+                        Department: "",
+                        StartDate: null, // Use null for DatePickers
+                        EndDate: null,
+                        TotalHours: "",
+                        RemainingHours: "",
+                      
+                    });
+
+                    // Update bindings after clearing the model
+                    newprojectModel.updateBindings();
+
+                }.bind(this),
+                error: function (oError) {
+                    // Handle error
+                    sap.m.MessageBox.error("An error occurred while Employee Details Creating..");
+                }
+            });
         },
 
         // Submit new employee data to backend

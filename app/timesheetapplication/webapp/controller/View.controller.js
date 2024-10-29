@@ -1,4 +1,3 @@
-// 
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageToast",
@@ -61,7 +60,12 @@ sap.ui.define([
                             },
                             odata: oData
                         });
-                        that.component.navTo("Timesheetdata");
+                        if(oData.MANAGERFLAG==="No"){
+                            that.component.navTo("Timesheetdata");
+                        }else{
+                            that.component.navTo("Tileview");
+                        }
+                        
                     } else {
                         MessageBox.error("Invalid credentials. Please try again.");
                     }

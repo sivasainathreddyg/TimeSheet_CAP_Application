@@ -1,0 +1,96 @@
+<mvc:View controllerName="timesheetapplication.controller.Tileview"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout">
+
+    <!-- Custom Header Section -->
+    <Page id="page" title="Employee Management">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button
+                        icon="sap-icon://home"
+                        press="onHomePress"
+                        tooltip="Home"
+                        text="Home"
+                        type="Emphasized"
+                    />
+                </contentLeft>
+                <contentMiddle>
+                    <Label
+                        text="App Maintainance"
+                        design="Bold"
+                        class="classlabelTimesheet"
+                    />
+                </contentMiddle>
+                <contentRight>
+                    <Title
+                        text=""
+                        id="FullNames"
+                        level="H1"
+                    />
+                    <core:Icon
+                        src="sap-icon://customer"
+                        size="150%"
+                        press="CustomerHeader"
+                        decorative="false"
+                        id="idUserIcons"
+                        color="#0000ff"
+                    >
+                        <core:layoutData>
+                            <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                    </core:Icon>
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <!-- Main Content Section -->
+        <content>
+            <VBox justifyContent="Center" alignItems="Center" height="100%">
+                <HBox justifyContent="Center" alignItems="Center" width="50%">
+
+                <GenericTile
+                        header="TimeSheet"
+                        press="onTimeSheetView"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://timesheet" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+                    <GenericTile
+                        header="Employee Managment"
+                        press="onEmployeeManagment"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://add-employee" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Project Managment"
+                        press="onProjectManagment"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://create-form" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="AnalyticalView"
+                        press="onAnalyticalView"
+                        frameType="TwoByOne"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <core:Icon src="sap-icon://bar-chart" size="2rem" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

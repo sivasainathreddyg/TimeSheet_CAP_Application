@@ -132,14 +132,14 @@
                                     <Text text="Phase" />
                                 </Column>
                                 <Column
-                                    width="10%"
+                                    width="18%"
                                     hAlign="Begin"
                                 >
                                     <Text text="Deliverable" />
                                 </Column>
                                 <!-- Days Columns -->
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -151,7 +151,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -163,7 +163,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -175,7 +175,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -187,7 +187,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -199,7 +199,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -211,7 +211,7 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="11%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <VBox>
@@ -223,13 +223,13 @@
                                     </VBox>
                                 </Column>
                                 <Column
-                                    width="10%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <Text text="Total Hours" />
                                 </Column>
                                 <Column
-                                    width="10%"
+                                    width="7%"
                                     hAlign="Center"
                                 >
                                     <Text text="Avail Hours" />

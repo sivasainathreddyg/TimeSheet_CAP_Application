@@ -178,7 +178,7 @@ sap.ui.define(
         });
       },
       onHomePress: function () {
-        this.getOwnerComponent().getRouter().navTo("RouteView")
+        this.getOwnerComponent().getRouter().navTo("Tileview")
       },
       CustomerHeader: function (oEvent) {
         var oSource = oEvent.getSource(),

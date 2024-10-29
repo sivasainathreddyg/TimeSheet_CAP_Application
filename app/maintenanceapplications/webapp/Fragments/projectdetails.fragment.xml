@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+>
+    <!--<Dialog id="fileUploadDialog" title="Upload File" draggable="true" resizable="true" contentWidth="300px" class="sapUiContentPadding">-->
+    <Dialog
+        id="projectdetailsDialogs"
+        title="New Employee"
+        draggable="true"
+        resizable="true"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="New Project Details" />
+                </contentLeft>
+            </Bar>
+        </customHeader>
+        <content>
+            <f:SimpleForm>
+                <f:content>
+                    <Label text="ProjectID" />
+                    <Input value="{newprojectModel>/ProjectID}" />
+
+                    <Label text="KY" />
+                    <Input value="{newprojectModel>/KY}" />
+
+                    <Label text="ProjectName" />
+                    <Input value="{newprojectModel>/ProjectName}" />
+
+                    <Label text="Department" />
+                    <Input value="{newprojectModel>/Department}" />
+
+                    
+                    <Label text="StartDate" />
+                    <DatePicker value="{newprojectModel>/StartDate}" />
+
+                    <Label text="EndDate" />
+                    <DatePicker value="{newprojectModel>/EndDate}" />
+
+                    <Label text="TotalHours" />
+                    <Input value="{newprojectModel>/TotalHours}" />
+
+                    <Label text="RemainingHours" />
+                    <Input value="{newprojectModel>/RemainingHours}" />
+
+                    <Label text="Employee Status" />
+                    <ComboBox
+                        selectedKey="{newprojectModel>/EmployeeStatus}"
+                        id="employeeprojectStatusComboBox"
+                    >
+                        <core:Item
+                            key="Active"
+                            text="Active"
+                        />
+                        <core:Item
+                            key="Completed"
+                            text="Completed"
+                        />
+                    </ComboBox>
+
+                    
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button
+                text="Submit"
+                type="Emphasized"
+                press="onNewprojectSubmit"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Cancel"
+                type="Reject"
+                press="onCancelprojectdetails"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
