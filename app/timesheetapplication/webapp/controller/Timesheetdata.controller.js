@@ -178,7 +178,11 @@ sap.ui.define(
         });
       },
       onHomePress: function () {
-        this.getOwnerComponent().getRouter().navTo("Tileview")
+        if (that.oGmodel.oData.odata.MANAGERFLAG === "No") {
+          this.getOwnerComponent().getRouter().navTo("RouteView")
+        }else{
+          this.getOwnerComponent().getRouter().navTo("Tileview")
+        }
       },
       CustomerHeader: function (oEvent) {
         var oSource = oEvent.getSource(),

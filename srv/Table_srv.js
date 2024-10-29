@@ -400,82 +400,173 @@ module.exports = srv => {
             return req.error(400, 'Invalid JSON data provided.');
         }
         const { Period, EmpName } = parsedData;
-        try {
-            // Step 1: Fetch the existing header data
-            const existingHeaderData = await cds.run(
-                SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
-            );
+        var dates = Period.split("-");
+        var startdate = new Date(dates[0]);
+        var enddate = new Date(dates[1]);
+        var startmonth = startdate.getMonth();
+        var endmonth = enddate.getMonth();
 
-            if (existingHeaderData) {
-                // Step 2: Fetch the items data related to this timesheet
-                const existingItemsData = await cds.run(
-                    SELECT.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
+        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var startMonthName = monthNames[startmonth];
+        var endMonthName = monthNames[endmonth];
+        var monthdata = {
+            startmonth: startMonthName,
+            endmonth: endMonthName
+        }
+        try {
+            if (startMonthName === endMonthName) {
+                // Step 1: Fetch the existing header data
+                const existingHeaderData = await cds.run(
+                    SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
                 );
 
-                // Exclude the last item from the array
-                const itemsWithoutLast = existingItemsData.slice(0, -1);  // Exclude the last row
-
-                // Step 3: Accumulate hours by project ID
-                let projectHoursMap = {};
-
-                itemsWithoutLast.forEach(item => {
-                    const projectId = item.PROJECTID_PROJECTID;
-                    const workedHours = item.WORKINGHOURS;
-
-                    // Accumulate hours for the same project
-                    if (projectHoursMap[projectId]) {
-                        projectHoursMap[projectId] += workedHours;
-                    } else {
-                        projectHoursMap[projectId] = workedHours;
-                    }
-                });
-
-                // Step 4: Process each project and update remaining hours and status
-                const projectUpdatePromises = Object.keys(projectHoursMap).map(async (projectId) => {
-                    const totalWorkedHours = projectHoursMap[projectId];
-
-                    // Fetch project details to get the remaining hours and status
-                    const projectDetails = await cds.run(
-                        SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS').where({ PROJECTID: projectId })
+                if (existingHeaderData) {
+                    // Step 2: Fetch the items data related to this timesheet
+                    const existingItemsData = await cds.run(
+                        SELECT.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
                     );
 
-                    if (projectDetails) {
-                        const newRemainingHours = projectDetails.REMAININGHOURS + totalWorkedHours;
-                        let newStatus = projectDetails.STATUS;
+                    // Exclude the last item from the array
+                    const itemsWithoutLast = existingItemsData.slice(0, -1);  // Exclude the last row
+                    const monthColumnMap = {
+                        'January': 'JANUARYHOURS',
+                        'February': 'FEBRUARYHOURS',
+                        'March': 'MARCHHOURS',
+                        'April': 'APRILHOURS',
+                        'May': 'MAYHOURS',
+                        'June': 'JUNEHOURS',
+                        'July': 'JULYHOURS',
+                        'August': 'AUGUSTHOURS',
+                        'September': 'SEPTEMBERHOURS',
+                        'October': 'OCTOBERHOURS',
+                        'November': 'NOVEMBERHOURS',
+                        'December': 'DECEMBERHOURS'
+                    };
+                    const monthColumnMapRemaining = {
+                        'January': 'JANUARYHOURSREMAINING',
+                        'February': 'FEBRUARYHOURSREMAINING',
+                        'March': 'MARCHHOURSREMAINING',
+                        'April': 'APRILHOURSREMAINING',
+                        'May': 'MAYHOURSREMAINING',
+                        'June': 'JUNEHOURSREMAINING',
+                        'July': 'JULYHOURSREMAINING',
+                        'August': 'AUGUSTHOURSREMAINING',
+                        'September': 'SEPTEMBERHOURSREMAINING',
+                        'October': 'OCTOBERHOURSREMAINING',
+                        'November': 'NOVEMBERHOURSREMAINING',
+                        'December': 'DECEMBERHOURSREMAINING'
+                    };
 
-                        // If remaining hours were 0 and now it's greater than 0, set status to Active
-                        if (newRemainingHours > 0 && projectDetails.REMAININGHOURS === 0) {
-                            newStatus = "Active";
+
+                    // Step 3: Accumulate hours by project ID
+                    let projectHoursMap = {};
+
+                    itemsWithoutLast.forEach(item => {
+                        const projectId = item.PROJECTID_PROJECTID;
+                        const workedHours = item.WORKINGHOURS;
+
+                        // Accumulate hours for the same project
+                        if (projectHoursMap[projectId]) {
+                            projectHoursMap[projectId] += workedHours;
+                        } else {
+                            projectHoursMap[projectId] = workedHours;
                         }
+                    });
 
-                        // If remaining hours are 0 after update, set status to Completed
-                        if (newRemainingHours === 0) {
-                            newStatus = "Completed";
-                        }
 
-                        // Update project details with new remaining hours and status
-                        await cds.run(
-                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                .set({ REMAININGHOURS: newRemainingHours, STATUS: newStatus })
-                                .where({ PROJECTID: projectId })
+
+                    // Step 4: Process each project and update remaining hours and status
+                    const projectUpdatePromises = Object.keys(projectHoursMap).map(async (projectId) => {
+                        const totalWorkedHours = projectHoursMap[projectId];
+
+                        // Fetch project details to get the remaining hours and status
+                        const projectDetails = await cds.run(
+                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS').where({ PROJECTID: projectId })
                         );
-                    }
-                });
 
-                await Promise.all(projectUpdatePromises);  // Ensure all updates are processed
+                        if (projectDetails) {
+                            const startmonthName = new Date(projectDetails.STARTDATE);  // e.g., 'March'
+                            const endmonthName = new Date(projectDetails.ENDDATE);      // e.g., 'October'
+                            const projectStartMonth = startmonthName.toLocaleString('default', { month: 'long' });
+                            const projectEndMonth = endmonthName.toLocaleString('default', { month: 'long' });
+                            const months = Object.keys(monthColumnMap);
+                            const startMonthIndex = months.indexOf(projectStartMonth);
+                            const endMonthIndex = months.indexOf(projectEndMonth);
+                            const newRemainingHours = projectDetails.REMAININGHOURS + totalWorkedHours;
+                            const Billedhours = projectDetails.BILLEDHOURS - totalWorkedHours;
+                            const currentMonthHoursColumn = monthColumnMap[startMonthName];
+                            const monthhours = projectDetails[currentMonthHoursColumn] - totalWorkedHours;
+                            const availableHours = projectDetails.REMAININGHOURS;
+                            const totalHours = projectDetails.TOTALHOURS;
 
-                // Step 5: Delete the header and items data
-                await cds.run(
-                    DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
-                );
-                await cds.run(
-                    DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
-                );
+                            // Calculate remaining hours
+                            const remainingHours = availableHours - totalWorkedHours;
 
-                return {
-                    status: 'Success',
-                    message: 'Timesheet data deleted and project hours restored successfully'
-                };
+                            let newStatus = projectDetails.STATUS;
+
+
+                            // If remaining hours were 0 and now it's greater than 0, set status to Active
+                            if (newRemainingHours > 0 && projectDetails.REMAININGHOURS === 0) {
+                                newStatus = "Active";
+                            }
+
+                            // If remaining hours are 0 after update, set status to Completed
+                            if (newRemainingHours === 0) {
+                                newStatus = "Completed";
+                            }
+
+                            // Update project details with new remaining hours and status
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .set({ REMAININGHOURS: newRemainingHours, BILLEDHOURS: Billedhours, [currentMonthHoursColumn]: monthhours, STATUS: newStatus })
+                                    .where({ PROJECTID: projectId })
+                            );
+                            let cumulativeHours = 0;
+                            const projectHoursData = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(Object.values(monthColumnMap))
+                                    .where({ PROJECTID: projectId })
+                            );
+                            // Loop through each month within the project start and end dates
+                            for (let i = startMonthIndex; i <= endMonthIndex; i++) {
+                                const currentMonth = months[i];
+                                const currentMonthHoursColumn = monthColumnMap[currentMonth];
+                                const currentRemainingMonthColumn = monthColumnMapRemaining[currentMonth];
+
+                                // Retrieve hours submitted for the current month, defaulting to 0 if undefined
+                                const currentMonthHours = projectHoursData[currentMonthHoursColumn] || 0;
+
+                                // Calculate remaining hours for the current month based on cumulative hours
+                                const remainingHours = totalHours - (cumulativeHours + currentMonthHours);
+
+                                // Update the remaining hours for the current month in the database
+                                await cds.run(
+                                    UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                        .set({ [currentRemainingMonthColumn]: remainingHours })
+                                        .where({ PROJECTID: projectId })
+                                );
+
+                                // Accumulate hours up to this month for future calculations
+                                cumulativeHours += currentMonthHours;
+                            }
+                        }
+                    });
+
+                    await Promise.all(projectUpdatePromises);  // Ensure all updates are processed
+
+                    // Step 5: Delete the header and items data
+                    await cds.run(
+                        DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
+                    );
+                    await cds.run(
+                        DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: Period, EMPLOYEENAME: EmpName })
+                    );
+
+                    return {
+                        status: 'Success',
+                        message: 'Timesheet data deleted and project hours restored successfully'
+                    };
+                }
             } else {
                 return {
                     status: 'Error',
@@ -668,110 +759,129 @@ module.exports = srv => {
                         const remainingHours = availableHours - totalWorkedHours;
 
                         // const RemainingHoursmonth=remainingHours-totalWorkedHours;
-     // --------------------------------------------------------------------------------------------------------
+                        // --------------------------------------------------------------------------------------------------------
                         // Project start and end months
                         if (Monthdata.startmonth === Monthdata.endmonth) {
-                        const startmonthName = new Date(projectDetails.STARTDATE);  // e.g., 'March'
-                        const endmonthName = new Date(projectDetails.ENDDATE);      // e.g., 'October'
-                        const projectStartMonth = startmonthName.toLocaleString('default', { month: 'long' });
-                        const projectEndMonth = endmonthName.toLocaleString('default', { month: 'long' });
-                        // const totalHours = projectData[0].TOTALHOURS;    // Total project hours
+                            const startmonthName = new Date(projectDetails.STARTDATE);  // e.g., 'March'
+                            const endmonthName = new Date(projectDetails.ENDDATE);      // e.g., 'October'
+                            const projectStartMonth = startmonthName.toLocaleString('default', { month: 'long' });
+                            const projectEndMonth = endmonthName.toLocaleString('default', { month: 'long' });
+                            // const totalHours = projectData[0].TOTALHOURS;    // Total project hours
 
-                        // Column maps for hours and remaining hours
-                        const monthColumnMap = {
-                            'January': 'JANUARYHOURS',
-                            'February': 'FEBRUARYHOURS',
-                            'March': 'MARCHHOURS',
-                            'April': 'APRILHOURS',
-                            'May': 'MAYHOURS',
-                            'June': 'JUNEHOURS',
-                            'July': 'JULYHOURS',
-                            'August': 'AUGUSTHOURS',
-                            'September': 'SEPTEMBERHOURS',
-                            'October': 'OCTOBERHOURS',
-                            'November': 'NOVEMBERHOURS',
-                            'December': 'DECEMBERHOURS'
-                        };
-                        const monthColumnMapRemaining = {
-                            'January': 'JANUARYHOURSREMAINING',
-                            'February': 'FEBRUARYHOURSREMAINING',
-                            'March': 'MARCHHOURSREMAINING',
-                            'April': 'APRILHOURSREMAINING',
-                            'May': 'MAYHOURSREMAINING',
-                            'June': 'JUNEHOURSREMAINING',
-                            'July': 'JULYHOURSREMAINING',
-                            'August': 'AUGUSTHOURSREMAINING',
-                            'September': 'SEPTEMBERHOURSREMAINING',
-                            'October': 'OCTOBERHOURSREMAINING',
-                            'November': 'NOVEMBERHOURSREMAINING',
-                            'December': 'DECEMBERHOURSREMAINING'
-                        };
+                            // Column maps for hours and remaining hours
+                            const monthColumnMap = {
+                                'January': 'JANUARYHOURS',
+                                'February': 'FEBRUARYHOURS',
+                                'March': 'MARCHHOURS',
+                                'April': 'APRILHOURS',
+                                'May': 'MAYHOURS',
+                                'June': 'JUNEHOURS',
+                                'July': 'JULYHOURS',
+                                'August': 'AUGUSTHOURS',
+                                'September': 'SEPTEMBERHOURS',
+                                'October': 'OCTOBERHOURS',
+                                'November': 'NOVEMBERHOURS',
+                                'December': 'DECEMBERHOURS'
+                            };
+                            const monthColumnMapRemaining = {
+                                'January': 'JANUARYHOURSREMAINING',
+                                'February': 'FEBRUARYHOURSREMAINING',
+                                'March': 'MARCHHOURSREMAINING',
+                                'April': 'APRILHOURSREMAINING',
+                                'May': 'MAYHOURSREMAINING',
+                                'June': 'JUNEHOURSREMAINING',
+                                'July': 'JULYHOURSREMAINING',
+                                'August': 'AUGUSTHOURSREMAINING',
+                                'September': 'SEPTEMBERHOURSREMAINING',
+                                'October': 'OCTOBERHOURSREMAINING',
+                                'November': 'NOVEMBERHOURSREMAINING',
+                                'December': 'DECEMBERHOURSREMAINING'
+                            };
 
-                        // Month indexes
-                        const months = Object.keys(monthColumnMap);
-                        const startMonthIndex = months.indexOf(projectStartMonth);
-                        const endMonthIndex = months.indexOf(projectEndMonth);
+                            // Month indexes
+                            const months = Object.keys(monthColumnMap);
+                            const startMonthIndex = months.indexOf(projectStartMonth);
+                            const endMonthIndex = months.indexOf(projectEndMonth);
 
-                        // Retrieve project hours data for cumulative calculation
-                        const Billedhoursdata = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns('BILLEDHOURS')
-                                .where({ PROJECTID: projectid })
-                        );
-                        const projectHoursData1 = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(Object.values(monthColumnMap))
-                                .where({ PROJECTID: projectid })
-                        );
-                        // Update the specific month’s worked hours and billed hours as usual
-                        const currentMonthHoursColumn = monthColumnMap[Monthdata.startmonth];  // e.g., 'MARCHHOURS' if submitted for March
-                        const currentMonthHours = (projectHoursData1[currentMonthHoursColumn] || 0) + totalWorkedHours;
-                        const newBilledHours = (Billedhoursdata.BILLEDHOURS || 0) + totalWorkedHours;
+                            // Retrieve project hours data for cumulative calculation
+                            const Billedhoursdata = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns('BILLEDHOURS')
+                                    .where({ PROJECTID: projectid })
+                            );
+                            const projectHoursData1 = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(Object.values(monthColumnMap))
+                                    .where({ PROJECTID: projectid })
+                            );
+                            // Update the specific month’s worked hours and billed hours as usual
+                            const currentMonthHoursColumn = monthColumnMap[Monthdata.startmonth];  // e.g., 'MARCHHOURS' if submitted for March
+                            const currentMonthHours = (projectHoursData1[currentMonthHoursColumn] || 0) + totalWorkedHours;
+                            const newBilledHours = (Billedhoursdata.BILLEDHOURS || 0) + totalWorkedHours;
 
-                        // Update project details with the new values for worked hours and billed hours
-                        await cds.run(
-                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                .set({
-                                    [currentMonthHoursColumn]: currentMonthHours,
-                                    BILLEDHOURS: newBilledHours
-                                })
-                                .where({ PROJECTID: projectid })
-                        );
-
-                        // Initialize cumulative sum of hours
-                        let cumulativeHours = 0;
-                        const projectHoursData = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(Object.values(monthColumnMap))
-                                .where({ PROJECTID: projectid })
-                        );
-                        // Loop through each month within the project start and end dates
-                        for (let i = startMonthIndex; i <= endMonthIndex; i++) {
-                            const currentMonth = months[i];
-                            const currentMonthHoursColumn = monthColumnMap[currentMonth];
-                            const currentRemainingMonthColumn = monthColumnMapRemaining[currentMonth];
-
-                            // Retrieve hours submitted for the current month, defaulting to 0 if undefined
-                            const currentMonthHours = projectHoursData[currentMonthHoursColumn] || 0;
-
-                            // Calculate remaining hours for the current month based on cumulative hours
-                            const remainingHours = totalHours - (cumulativeHours + currentMonthHours);
-
-                            // Update the remaining hours for the current month in the database
+                            // Update project details with the new values for worked hours and billed hours
                             await cds.run(
                                 UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                    .set({ [currentRemainingMonthColumn]: remainingHours })
+                                    .set({
+                                        [currentMonthHoursColumn]: currentMonthHours,
+                                        BILLEDHOURS: newBilledHours
+                                    })
                                     .where({ PROJECTID: projectid })
                             );
 
-                            // Accumulate hours up to this month for future calculations
-                            cumulativeHours += currentMonthHours;
+                            // Initialize cumulative sum of hours
+                            let cumulativeHours = 0;
+                            const projectHoursData = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(Object.values(monthColumnMap))
+                                    .where({ PROJECTID: projectid })
+                            );
+                            // Loop through each month within the project start and end dates
+                            for (let i = startMonthIndex; i <= endMonthIndex; i++) {
+                                const currentMonth = months[i];
+                                const currentMonthHoursColumn = monthColumnMap[currentMonth];
+                                const currentRemainingMonthColumn = monthColumnMapRemaining[currentMonth];
+
+                                // Retrieve hours submitted for the current month, defaulting to 0 if undefined
+                                const currentMonthHours = projectHoursData[currentMonthHoursColumn] || 0;
+
+                                // Calculate remaining hours for the current month based on cumulative hours
+                                const remainingHours = totalHours - (cumulativeHours + currentMonthHours);
+
+                                // Update the remaining hours for the current month in the database
+                                await cds.run(
+                                    UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                        .set({ [currentRemainingMonthColumn]: remainingHours })
+                                        .where({ PROJECTID: projectid })
+                                );
+
+                                // Accumulate hours up to this month for future calculations
+                                cumulativeHours += currentMonthHours;
+                            }
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .set({ REMAININGHOURS: remainingHours })
+                                    .where({ PROJECTID: projectid })
+                            );
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTKO')
+                                    .set({ REMAININGHOURS: remainingHours })
+                                    .where({ PROJECTID: projectid })
+                            );
+
+                            // If remaining hours are zero, mark the project as "Completed"
+                            if (remainingHours === 0) {
+                                await cds.run(
+                                    UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                        .set({ STATUS: "Completed" })
+                                        .where({ PROJECTID: projectid })
+                                );
+                            }
+
+
                         }
 
-                        
-                    }
-
-// ------------------------------------------------------------------------------------------------------
+                        // ------------------------------------------------------------------------------------------------------
                         // if (Monthdata.startmonth === Monthdata.endmonth) {
                         //     const monthColumnMap = {
                         //         'January': 'JANUARYHOURS',
@@ -837,382 +947,382 @@ module.exports = srv => {
                         //     }
                         // }
                         else {
-                        // Logic for when the start month and end month are different
-                        const firstMonth = Monthdata.startmonth;
-                        const secondMonth = Monthdata.endmonth;
-                        const startmonthName = new Date(projectDetails.STARTDATE);  // e.g., 'March'
-                        const endmonthName = new Date(projectDetails.ENDDATE);      // e.g., 'October'
-                        const projectStartMonth = startmonthName.toLocaleString('default', { month: 'long' });
-                        const projectEndMonth = endmonthName.toLocaleString('default', { month: 'long' });
+                            // Logic for when the start month and end month are different
+                            const firstMonth = Monthdata.startmonth;
+                            const secondMonth = Monthdata.endmonth;
+                            const startmonthName = new Date(projectDetails.STARTDATE);  // e.g., 'March'
+                            const endmonthName = new Date(projectDetails.ENDDATE);      // e.g., 'October'
+                            const projectStartMonth = startmonthName.toLocaleString('default', { month: 'long' });
+                            const projectEndMonth = endmonthName.toLocaleString('default', { month: 'long' });
 
-                        // Define month maps for the first and second month columns
-                        const firstMonthColumnMap = {
-                            'January': 'JANUARYHOURS',
-                            'February': 'FEBRUARYHOURS',
-                            'March': 'MARCHHOURS',
-                            'April': 'APRILHOURS',
-                            'May': 'MAYHOURS',
-                            'June': 'JUNEHOURS',
-                            'July': 'JULYHOURS',
-                            'August': 'AUGUSTHOURS',
-                            'September': 'SEPTEMBERHOURS',
-                            'October': 'OCTOBERHOURS',
-                            'November': 'NOVEMBERHOURS',
-                            'December': 'DECEMBERHOURS'
-                        };
-                        const monthColumnMapRemaining = {
-                            'January': 'JANUARYHOURSREMAINING',
-                            'February': 'FEBRUARYHOURSREMAINING',
-                            'March': 'MARCHHOURSREMAINING',
-                            'April': 'APRILHOURSREMAINING',
-                            'May': 'MAYHOURSREMAINING',
-                            'June': 'JUNEHOURSREMAINING',
-                            'July': 'JULYHOURSREMAINING',
-                            'August': 'AUGUSTHOURSREMAINING',
-                            'September': 'SEPTEMBERHOURSREMAINING',
-                            'October': 'OCTOBERHOURSREMAINING',
-                            'November': 'NOVEMBERHOURSREMAINING',
-                            'December': 'DECEMBERHOURSREMAINING'
+                            // Define month maps for the first and second month columns
+                            const firstMonthColumnMap = {
+                                'January': 'JANUARYHOURS',
+                                'February': 'FEBRUARYHOURS',
+                                'March': 'MARCHHOURS',
+                                'April': 'APRILHOURS',
+                                'May': 'MAYHOURS',
+                                'June': 'JUNEHOURS',
+                                'July': 'JULYHOURS',
+                                'August': 'AUGUSTHOURS',
+                                'September': 'SEPTEMBERHOURS',
+                                'October': 'OCTOBERHOURS',
+                                'November': 'NOVEMBERHOURS',
+                                'December': 'DECEMBERHOURS'
+                            };
+                            const monthColumnMapRemaining = {
+                                'January': 'JANUARYHOURSREMAINING',
+                                'February': 'FEBRUARYHOURSREMAINING',
+                                'March': 'MARCHHOURSREMAINING',
+                                'April': 'APRILHOURSREMAINING',
+                                'May': 'MAYHOURSREMAINING',
+                                'June': 'JUNEHOURSREMAINING',
+                                'July': 'JULYHOURSREMAINING',
+                                'August': 'AUGUSTHOURSREMAINING',
+                                'September': 'SEPTEMBERHOURSREMAINING',
+                                'October': 'OCTOBERHOURSREMAINING',
+                                'November': 'NOVEMBERHOURSREMAINING',
+                                'December': 'DECEMBERHOURSREMAINING'
 
-                        };
+                            };
 
-                        // Month indexes
-                        const months = Object.keys(firstMonthColumnMap);
-                        const startMonthIndex = months.indexOf(projectStartMonth);
-                        const endMonthIndex = months.indexOf(projectEndMonth);
+                            // Month indexes
+                            const months = Object.keys(firstMonthColumnMap);
+                            const startMonthIndex = months.indexOf(projectStartMonth);
+                            const endMonthIndex = months.indexOf(projectEndMonth);
 
 
-                        // Get the corresponding columns for the first and second month
-                        const firstMonthColumn = firstMonthColumnMap[firstMonth];
-                        const secondMonthColumn = firstMonthColumnMap[secondMonth];
+                            // Get the corresponding columns for the first and second month
+                            const firstMonthColumn = firstMonthColumnMap[firstMonth];
+                            const secondMonthColumn = firstMonthColumnMap[secondMonth];
 
-                        // Fetch project details for both months
-                        const projectDetailsFirstMonth = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(firstMonthColumn, 'BILLEDHOURS')
-                                .where({ PROJECTID: projectid })
-                        );
-                        const projectDetailsSecondMonth = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(secondMonthColumn, 'BILLEDHOURS')
-                                .where({ PROJECTID: projectid })
-                        );
-                        const projectHoursData1 = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(Object.values(firstMonthColumnMap))
-                                .where({ PROJECTID: projectid })
-                        );
-
-                        // Add the hours for the first and second months
-                        const firstMonthHours = projectDetailsFirstMonth[firstMonthColumn] || 0;
-                        const secondMonthHours = projectDetailsSecondMonth[secondMonthColumn] || 0;
-                        const newFirstMonthHours = firstMonthHours + Monthdatahours[projectid].firstMonthHours;
-                        const newSecondMonthHours = secondMonthHours + Monthdatahours[projectid].secondMonthHours;
-
-                        // Update both months in the database
-                        await cds.run(
-                            UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                .set({
-                                    [firstMonthColumn]: newFirstMonthHours,
-                                    [secondMonthColumn]: newSecondMonthHours,
-                                    BILLEDHOURS: projectDetailsFirstMonth.BILLEDHOURS + Monthdatahours[projectid].firstMonthHours + Monthdatahours[projectid].secondMonthHours
-                                })
-                                .where({ PROJECTID: projectid })
-                        );
-                        // await cds.run(
-                        //     UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                        //         .set({
-                        //             [secondMonthColumn]: newSecondMonthHours,
-                        //             BILLEDHOURS: projectDetailsSecondMonth.BILLEDHOURS + Monthdatahours[projectid].secondMonthHours
-                        //         })
-                        //         .where({ PROJECTID: projectid })
-                        // );
-                        let cumulativeHours = 0;
-                        const projectHoursData = await cds.run(
-                            SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                                .columns(Object.values(firstMonthColumnMap))
-                                .where({ PROJECTID: projectid })
-                        );
-                        for (let i = startMonthIndex; i <= endMonthIndex; i++) {
-                            const currentMonth = months[i];
-                            const currentMonthHoursColumn = firstMonthColumnMap[currentMonth];
-                            const currentRemainingMonthColumn = monthColumnMapRemaining[currentMonth];
-
-                            // Retrieve hours submitted for the current month, defaulting to 0 if undefined
-                            const currentMonthHours = projectHoursData[currentMonthHoursColumn] || 0;
-
-                            // Calculate remaining hours for the current month based on cumulative hours
-                            const remainingHours = totalHours - (cumulativeHours + currentMonthHours);
-
-                            // Update the remaining hours for the current month in the database
-                            await cds.run(
-                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                    .set({ [currentRemainingMonthColumn]: remainingHours })
+                            // Fetch project details for both months
+                            const projectDetailsFirstMonth = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(firstMonthColumn, 'BILLEDHOURS')
+                                    .where({ PROJECTID: projectid })
+                            );
+                            const projectDetailsSecondMonth = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(secondMonthColumn, 'BILLEDHOURS')
+                                    .where({ PROJECTID: projectid })
+                            );
+                            const projectHoursData1 = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(Object.values(firstMonthColumnMap))
                                     .where({ PROJECTID: projectid })
                             );
 
-                            // Accumulate hours up to this month for future calculations
-                            cumulativeHours += currentMonthHours;
+                            // Add the hours for the first and second months
+                            const firstMonthHours = projectDetailsFirstMonth[firstMonthColumn] || 0;
+                            const secondMonthHours = projectDetailsSecondMonth[secondMonthColumn] || 0;
+                            const newFirstMonthHours = firstMonthHours + Monthdatahours[projectid].firstMonthHours;
+                            const newSecondMonthHours = secondMonthHours + Monthdatahours[projectid].secondMonthHours;
+
+                            // Update both months in the database
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .set({
+                                        [firstMonthColumn]: newFirstMonthHours,
+                                        [secondMonthColumn]: newSecondMonthHours,
+                                        BILLEDHOURS: projectDetailsFirstMonth.BILLEDHOURS + Monthdatahours[projectid].firstMonthHours + Monthdatahours[projectid].secondMonthHours
+                                    })
+                                    .where({ PROJECTID: projectid })
+                            );
+                            // await cds.run(
+                            //     UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                            //         .set({
+                            //             [secondMonthColumn]: newSecondMonthHours,
+                            //             BILLEDHOURS: projectDetailsSecondMonth.BILLEDHOURS + Monthdatahours[projectid].secondMonthHours
+                            //         })
+                            //         .where({ PROJECTID: projectid })
+                            // );
+                            let cumulativeHours = 0;
+                            const projectHoursData = await cds.run(
+                                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .columns(Object.values(firstMonthColumnMap))
+                                    .where({ PROJECTID: projectid })
+                            );
+                            for (let i = startMonthIndex; i <= endMonthIndex; i++) {
+                                const currentMonth = months[i];
+                                const currentMonthHoursColumn = firstMonthColumnMap[currentMonth];
+                                const currentRemainingMonthColumn = monthColumnMapRemaining[currentMonth];
+
+                                // Retrieve hours submitted for the current month, defaulting to 0 if undefined
+                                const currentMonthHours = projectHoursData[currentMonthHoursColumn] || 0;
+
+                                // Calculate remaining hours for the current month based on cumulative hours
+                                const remainingHours = totalHours - (cumulativeHours + currentMonthHours);
+
+                                // Update the remaining hours for the current month in the database
+                                await cds.run(
+                                    UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                        .set({ [currentRemainingMonthColumn]: remainingHours })
+                                        .where({ PROJECTID: projectid })
+                                );
+
+                                // Accumulate hours up to this month for future calculations
+                                cumulativeHours += currentMonthHours;
+                            }
                         }
-                    }
 
-                    // Update the project details and project KO table
-                    await cds.run(
-                        UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                            .set({ REMAININGHOURS: remainingHours })
-                            .where({ PROJECTID: projectid })
-                    );
-                    await cds.run(
-                        UPDATE('TIMESHEETTABLE_PROJECTKO')
-                            .set({ REMAININGHOURS: remainingHours })
-                            .where({ PROJECTID: projectid })
-                    );
-
-                    // If remaining hours are zero, mark the project as "Completed"
-                    if (remainingHours === 0) {
+                        // Update the project details and project KO table
                         await cds.run(
                             UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-                                .set({ STATUS: "Completed" })
+                                .set({ REMAININGHOURS: remainingHours })
                                 .where({ PROJECTID: projectid })
                         );
+                        await cds.run(
+                            UPDATE('TIMESHEETTABLE_PROJECTKO')
+                                .set({ REMAININGHOURS: remainingHours })
+                                .where({ PROJECTID: projectid })
+                        );
+
+                        // If remaining hours are zero, mark the project as "Completed"
+                        if (remainingHours === 0) {
+                            await cds.run(
+                                UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+                                    .set({ STATUS: "Completed" })
+                                    .where({ PROJECTID: projectid })
+                            );
+                        }
                     }
-                }
                 });
 
-    await Promise.all(projectUpdatePromises);
-}
+                await Promise.all(projectUpdatePromises);
+            }
 
-return {
-    status: 'Success',
-    message: 'Timesheet data saved and project details updated successfully'
-};
+            return {
+                status: 'Success',
+                message: 'Timesheet data saved and project details updated successfully'
+            };
 
         } catch (error) {
-    console.error("Error processing timesheet data:", error);
-    return {
-        status: 'Error',
-        message: 'Failed to save timesheet data and update project details',
-        error: error.message
-    };
-}
+            console.error("Error processing timesheet data:", error);
+            return {
+                status: 'Error',
+                message: 'Failed to save timesheet data and update project details',
+                error: error.message
+            };
+        }
     });
 
 
-// srv.on('TimeSheetSubmit', async (req) => {
-//     try {
-//         const headerData = JSON.parse(req.data.headerData);
-//         const itemsData = JSON.parse(req.data.itemsData);
-//         const period = req.data.period;
-//         const empname = headerData.EMPLOYEENAME;
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+    //         const period = req.data.period;
+    //         const empname = headerData.EMPLOYEENAME;
 
-//         const existingHeader = await cds.run(
-//             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
-//         );
+    //         const existingHeader = await cds.run(
+    //             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //         );
 
-//         if (existingHeader) {
+    //         if (existingHeader) {
 
-//             await cds.run(
-//                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
-//             );
-//             await cds.run(
-//                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
-//             );
-//         }
-
-
-//         await cds.run(
-//             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
-//         );
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //         }
 
 
-//         const itemsInsertPromises = itemsData.map(item => {
-//             return cds.run(
-//                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
-//             );
-//         });
-
-//         await Promise.all(itemsInsertPromises);
-
-//         if (headerData.STATUS = "Submitted") {
-//             const projectUpdatePromises = itemsData.map(async (item) => {
-//                 const { PROJECTID_PROJECTID: projectid, AvailableHours } = item;
-
-//                 await cds.run(
-//                     UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-//                         .set({ REMAININGHOURS: AvailableHours })
-//                         .where({ PROJECTID: projectid })
-//                 );
-//                 await cds.run(
-//                     UPDATE('TIMESHEETTABLE_PROJECTKO')
-//                         .set({ REMAININGHOURS: AvailableHours })
-//                         .where({ PROJECTID: projectid })
-//                 )
-//                 if (AvailableHours === 0) {
-//                     await cds.run(
-//                         UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
-//                             .set({ STATUS: "Completed" })
-//                             .where({ PROJECTID: projectid })
-//                     );
-//                 }
-//             });
-
-//             await Promise.all(projectUpdatePromises);
-
-//         }
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
 
 
-//         return {
-//             status: 'Success',
-//             message: 'Timesheet data saved and project details updated successfully'
-//         };
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
 
-//     } catch (error) {
-//         console.error("Error processing timesheet data:", error);
-//         return {
-//             status: 'Error',
-//             message: 'Failed to save timesheet data and update project details',
-//             error: error.message
-//         };
-//     }
-// });
+    //         await Promise.all(itemsInsertPromises);
 
+    //         if (headerData.STATUS = "Submitted") {
+    //             const projectUpdatePromises = itemsData.map(async (item) => {
+    //                 const { PROJECTID_PROJECTID: projectid, AvailableHours } = item;
 
-// srv.on('TimeSheetSubmit', async (req) => {
-//     try {
+    //                 await cds.run(
+    //                     UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+    //                         .set({ REMAININGHOURS: AvailableHours })
+    //                         .where({ PROJECTID: projectid })
+    //                 );
+    //                 await cds.run(
+    //                     UPDATE('TIMESHEETTABLE_PROJECTKO')
+    //                         .set({ REMAININGHOURS: AvailableHours })
+    //                         .where({ PROJECTID: projectid })
+    //                 )
+    //                 if (AvailableHours === 0) {
+    //                     await cds.run(
+    //                         UPDATE('TIMESHEETTABLE_PROJECTDETAILS')
+    //                             .set({ STATUS: "Completed" })
+    //                             .where({ PROJECTID: projectid })
+    //                     );
+    //                 }
+    //             });
 
-//         const headerData = JSON.parse(req.data.headerData);
-//         const itemsData = JSON.parse(req.data.itemsData);
-//         const period = req.data.period;
-//         const empname = headerData.EMPLOYEENAME;
-//         const existingHeader = await cds.run(
-//             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
-//         );
+    //             await Promise.all(projectUpdatePromises);
 
-//         if (existingHeader) {
-//             await cds.run(
-//                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
-//             );
-//             await cds.run(
-//                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
-//             );
-//         }
-//         await cds.run(
-//             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
-//         );
-//         const itemsInsertPromises = itemsData.map(item => {
-//             return cds.run(
-//                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
-//             );
-//         });
-
-//         await Promise.all(itemsInsertPromises);
-
-//         return {
-//             status: 'Success',
-//             message: 'Timesheet data saved successfully'
-//         };
-
-//     } catch (error) {
-//         console.error("Error inserting timesheet data:", error);
-//         return {
-//             status: 'Error',
-//             message: 'Failed to save timesheet data',
-//             error: error.message
-//         };
-//     }
-// });
+    //         }
 
 
-// srv.on('TimeSheetSubmit', async (req) => {
-//     try {
-//         // Parse the stringified data into objects
-//         const headerData = JSON.parse(req.data.headerData);
-//         const itemsData = JSON.parse(req.data.itemsData);
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved and project details updated successfully'
+    //         };
 
-//         // Insert header data
-//         await cds.run(
-//             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
-//         );
-
-//         // Insert each item from the items array
-//         const itemsInsertPromises = itemsData.map(item => {
-//             return cds.run(
-//                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
-//             );
-//         });
-
-//         await Promise.all(itemsInsertPromises);
+    //     } catch (error) {
+    //         console.error("Error processing timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data and update project details',
+    //             error: error.message
+    //         };
+    //     }
+    // });
 
 
-//         return {
-//             status: 'Success',
-//             message: 'Timesheet data saved successfully'
-//         };
-//     } catch (error) {
-//         console.error("Error inserting timesheet data:", error);
-//         return {
-//             status: 'Error',
-//             message: 'Failed to save timesheet data',
-//             error: error.message
-//         };
-//     }
-// });
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
 
-srv.on('RetriveTimeSheetdata', async (req) => {
-    const { EmployeeName, period, Status } = req.data;
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+    //         const period = req.data.period;
+    //         const empname = headerData.EMPLOYEENAME;
+    //         const existingHeader = await cds.run(
+    //             SELECT.one.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //         );
 
-    try {
-        // Fetch the header from TIMESHEETTABLE_TIMESHEETHEADER
-        const header = await SELECT.one.from("TIMESHEETTABLE_TIMESHEETHEADER")
-            .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
+    //         if (existingHeader) {
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETHEADER').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //             await cds.run(
+    //                 DELETE.from('TIMESHEETTABLE_TIMESHEETITEM').where({ PERIOD: period, EMPLOYEENAME: empname })
+    //             );
+    //         }
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
 
-        // If no header is found, return an empty response
-        if (!header) {
-            return JSON.stringify({ header: [], items: [] });
+    //         await Promise.all(itemsInsertPromises);
+
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved successfully'
+    //         };
+
+    //     } catch (error) {
+    //         console.error("Error inserting timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data',
+    //             error: error.message
+    //         };
+    //     }
+    // });
+
+
+    // srv.on('TimeSheetSubmit', async (req) => {
+    //     try {
+    //         // Parse the stringified data into objects
+    //         const headerData = JSON.parse(req.data.headerData);
+    //         const itemsData = JSON.parse(req.data.itemsData);
+
+    //         // Insert header data
+    //         await cds.run(
+    //             INSERT.into('TIMESHEETTABLE_TIMESHEETHEADER').entries(headerData)
+    //         );
+
+    //         // Insert each item from the items array
+    //         const itemsInsertPromises = itemsData.map(item => {
+    //             return cds.run(
+    //                 INSERT.into('TIMESHEETTABLE_TIMESHEETITEM').entries(item)
+    //             );
+    //         });
+
+    //         await Promise.all(itemsInsertPromises);
+
+
+    //         return {
+    //             status: 'Success',
+    //             message: 'Timesheet data saved successfully'
+    //         };
+    //     } catch (error) {
+    //         console.error("Error inserting timesheet data:", error);
+    //         return {
+    //             status: 'Error',
+    //             message: 'Failed to save timesheet data',
+    //             error: error.message
+    //         };
+    //     }
+    // });
+
+    srv.on('RetriveTimeSheetdata', async (req) => {
+        const { EmployeeName, period, Status } = req.data;
+
+        try {
+            // Fetch the header from TIMESHEETTABLE_TIMESHEETHEADER
+            const header = await SELECT.one.from("TIMESHEETTABLE_TIMESHEETHEADER")
+                .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
+
+            // If no header is found, return an empty response
+            if (!header) {
+                return JSON.stringify({ header: [], items: [] });
+            }
+
+            // Fetch associated TimeSheetItem data using the TimeSheetID from header
+            let items = await SELECT.from("TIMESHEETTABLE_TIMESHEETITEM")
+                .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
+
+            if (Status === "Save") {
+                // If Status is "Save", update AvailableHours in the items
+                const updatedItemsPromises = items.map(async (item) => {
+                    const { PROJECTID_PROJECTID } = item;
+
+                    // Fetch available hours from TIMESHEETTABLE_PROJECTDETAILS based on ProjectID
+                    const projectDetails = await SELECT.one.from("TIMESHEETTABLE_PROJECTDETAILS")
+                        .where({ PROJECTID: PROJECTID_PROJECTID });
+
+                    if (projectDetails) {
+                        // Update AvailableHours in the item
+                        item.AVAILABLEHOURS = projectDetails.REMAININGHOURS;
+                    } else {
+                        // Set to 0 or some default value if project details are not found
+                        item.AVAILABLEHOURS = 0;
+                    }
+
+                    return item;  // Return the updated item
+                });
+
+                // Wait for all promises to resolve
+                items = await Promise.all(updatedItemsPromises);
+            }
+
+            // Combine header and items into a single object
+            const responseData = {
+                header: [header],
+                items: items
+            };
+
+            // Return the response as a stringified JSON object
+            return JSON.stringify(responseData);
+
+        } catch (error) {
+            console.error("Error retrieving timesheet data:", error);
+            req.error(500, "Failed to retrieve timesheet data.");
         }
-
-        // Fetch associated TimeSheetItem data using the TimeSheetID from header
-        let items = await SELECT.from("TIMESHEETTABLE_TIMESHEETITEM")
-            .where({ EMPLOYEENAME: EmployeeName, PERIOD: period });
-
-        if (Status === "Save") {
-            // If Status is "Save", update AvailableHours in the items
-            const updatedItemsPromises = items.map(async (item) => {
-                const { PROJECTID_PROJECTID } = item;
-
-                // Fetch available hours from TIMESHEETTABLE_PROJECTDETAILS based on ProjectID
-                const projectDetails = await SELECT.one.from("TIMESHEETTABLE_PROJECTDETAILS")
-                    .where({ PROJECTID: PROJECTID_PROJECTID });
-
-                if (projectDetails) {
-                    // Update AvailableHours in the item
-                    item.AVAILABLEHOURS = projectDetails.REMAININGHOURS;
-                } else {
-                    // Set to 0 or some default value if project details are not found
-                    item.AVAILABLEHOURS = 0;
-                }
-
-                return item;  // Return the updated item
-            });
-
-            // Wait for all promises to resolve
-            items = await Promise.all(updatedItemsPromises);
-        }
-
-        // Combine header and items into a single object
-        const responseData = {
-            header: [header],
-            items: items
-        };
-
-        // Return the response as a stringified JSON object
-        return JSON.stringify(responseData);
-
-    } catch (error) {
-        console.error("Error retrieving timesheet data:", error);
-        req.error(500, "Failed to retrieve timesheet data.");
-    }
-});
+    });
 
 
 

@@ -11,6 +11,7 @@ sap.ui.define([
     return Controller.extend("timesheetapplication.controller.Analyticalpage", {
         onInit: function () {
             this.loadProjectData();
+            sap.m.MessageBox.information("Select any project from the Combobox to see the analytical view.");
         },
 
 
@@ -317,5 +318,8 @@ sap.ui.define([
                 }
             });
         },
+        onHomePress:function(){
+            this.getOwnerComponent().getRouter().navTo("Tileview")
+        }
     });
 });
