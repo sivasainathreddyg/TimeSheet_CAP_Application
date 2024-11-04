@@ -25,6 +25,15 @@
                         class="classlabelTimesheet"
                     />
                 </contentMiddle>
+                <contentRight>
+                <Button 
+                icon="sap-icon://download"
+                press="onDownloadanalyticalgraph"
+                text="Download"
+                tooltip="Download the charts"
+                type="Emphasized"
+                ></Button>
+                </contentRight>
                 
             </Bar>
         </customHeader>
@@ -35,6 +44,7 @@
             <HBox>
                 <Text text="" width="13%" textAlign="Center" />
                 <ComboBox
+                 id="projectComboBox"
                     selectedKey="{projectModel>/PROJECTID}"
                     visible="{hidingProjNam}"
                     placeholder="Select project name"

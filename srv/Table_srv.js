@@ -201,12 +201,12 @@ module.exports = srv => {
         }
     });
     srv.on("retriveemployeedetails", async (req) => {
-        const empid = req.data.employeeid.trim(); // Trim the employee ID from the request
+       
 
         try {
 
             const employee = await cds.transaction(req).run(
-                SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EMPLOYEEID: empid })
+                SELECT.from("TIMESHEETTABLE_EMPLOYEEDETAILS")
             );
 
             if (employee) {

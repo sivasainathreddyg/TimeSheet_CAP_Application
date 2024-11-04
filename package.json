@@ -9,7 +9,8 @@
     "@cap-js/hana": "^1",
     "@sap/cds": "^8",
     "@sap/cds-odata-v2-adapter-proxy": "^1.9.21",
-    "express": "^4"
+    "express": "^4",
+    "jspdf": "^2.5.2"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.6",

@@ -1,0 +1,47 @@
+<mvc:View
+    controllerName="timesheetapplication.controller.EmployeeView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    
+    <Page title="Employee Management">
+        <content>
+            <VBox>
+                <Button text="Add Employee" press="onAddEmployee" />
+                <Table id="employeeTable" items="{/employees}">
+                    <columns>
+                        <Column><Text text="Employee ID" /></Column>
+                        <Column><Text text="First Name" /></Column>
+                        <Column><Text text="Last Name" /></Column>
+                        <Column><Text text="Role" /></Column>
+                        <Column><Text text="password" /></Column>
+                        <Column><Text text="Email" /></Column>
+                        <Column><Text text="Start Date" /></Column>
+                        <Column><Text text="End Date" /></Column>
+                        <Column><Text text="Status" /></Column>
+                        <Column><Text text="Type" /></Column>
+                         <Column><Text text="Flag" /></Column>
+                        <Column><Text text="Actions" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{employeeModel>EMPLOYEEID}" />
+                                <Input value="{employeeModel>FIRSTNAME}" editable="{employeeModel>isEditable}" />
+                                <Input value="{employeeModel>LASTNAME}" editable="{employeeModel>isEditable}" />
+                                <Input value="{employeeModel>DESIGNATION}" editable="{employeeModel>isEditable}" />
+                                <Input value="{employeeModel>PASSWORD}" editable="{employeeModel>isEditable}" />
+                                <Input value="{employeeModel>EMAILID}" editable="{employeeModel>isEditable}" />
+                                <Text text="{employeeModel>STARTDATE}" />
+                                <Text text="{employeeModel>ENDDATE}" />
+                                <Text text="{employeeModel>EMPLOYEESTATUS}" />
+                                <Text text="{employeeModel>EMPLOYEETYPE}" />
+                                 <Text text="{employeeModel>MANAGERFLAG}" />
+                                <Button text="{employeeModel>buttonText}" press="onEditPress" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

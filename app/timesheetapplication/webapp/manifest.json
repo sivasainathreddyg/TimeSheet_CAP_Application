@@ -147,6 +147,13 @@
           "target": [
             "NewTimesheet"
           ]
+        },
+        {
+          "name": "EmployeeView",
+          "pattern": "EmployeeView",
+          "target": [
+            "EmployeeView"
+          ]
         }
       ],
       "targets": {
@@ -184,6 +191,13 @@
           "clearControlAggregation": false,
           "viewId": "NewTimesheet",
           "viewName": "NewTimesheet"
+        },
+        "EmployeeView": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "EmployeeView",
+          "viewName": "EmployeeView"
         }
       }
     },
