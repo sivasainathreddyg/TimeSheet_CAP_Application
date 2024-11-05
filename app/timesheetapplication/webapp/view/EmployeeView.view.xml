@@ -1,42 +1,161 @@
 <mvc:View
     controllerName="timesheetapplication.controller.EmployeeView"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
     <Page title="Employee Management">
         <content>
             <VBox>
-                <Button text="Add Employee" press="onAddEmployee" />
-                <Table id="employeeTable" items="{/employees}">
+                <Button
+                    text="Add New Employee"
+                    press="onAddEmployee"
+                    class="classAddEmployee"
+                />
+                <Table
+                    id="employeeTable"
+                    items="{employeeModel>/employees}"
+                >
                     <columns>
-                        <Column><Text text="Employee ID" /></Column>
-                        <Column><Text text="First Name" /></Column>
-                        <Column><Text text="Last Name" /></Column>
-                        <Column><Text text="Role" /></Column>
-                        <Column><Text text="password" /></Column>
-                        <Column><Text text="Email" /></Column>
-                        <Column><Text text="Start Date" /></Column>
-                        <Column><Text text="End Date" /></Column>
-                        <Column><Text text="Status" /></Column>
-                        <Column><Text text="Type" /></Column>
-                         <Column><Text text="Flag" /></Column>
-                        <Column><Text text="Actions" /></Column>
+                        <Column width="7%">
+                            <Text text="Employee ID" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="First Name" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Last Name" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Role" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="password" />
+                        </Column>
+                        <Column width="15%">
+                            <Text text="Email" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Start Date" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="End Date" />
+                        </Column>
+                        <Column width="7%">
+                            <Text text="Status" />
+                        </Column>
+                        <Column width="7%">
+                            <Text text="Type" />
+                        </Column>
+                        <Column width="5%">
+                            <Text text="Flag" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Actions" />
+                        </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{employeeModel>EMPLOYEEID}" />
-                                <Input value="{employeeModel>FIRSTNAME}" editable="{employeeModel>isEditable}" />
-                                <Input value="{employeeModel>LASTNAME}" editable="{employeeModel>isEditable}" />
-                                <Input value="{employeeModel>DESIGNATION}" editable="{employeeModel>isEditable}" />
-                                <Input value="{employeeModel>PASSWORD}" editable="{employeeModel>isEditable}" />
-                                <Input value="{employeeModel>EMAILID}" editable="{employeeModel>isEditable}" />
-                                <Text text="{employeeModel>STARTDATE}" />
-                                <Text text="{employeeModel>ENDDATE}" />
-                                <Text text="{employeeModel>EMPLOYEESTATUS}" />
-                                <Text text="{employeeModel>EMPLOYEETYPE}" />
-                                 <Text text="{employeeModel>MANAGERFLAG}" />
-                                <Button text="{employeeModel>buttonText}" press="onEditPress" />
+                                <Input
+                                    value="{employeeModel>EMPLOYEEID}"
+                                    editable="{= ${employeeModel>isNew} ? true : false}"
+                                />
+                                <Input
+                                    value="{employeeModel>FIRSTNAME}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <Input
+                                    value="{employeeModel>LASTNAME}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <Input
+                                    value="{employeeModel>DESIGNATION}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <Input
+                                    value="{employeeModel>PASSWORD}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <Input
+                                    value="{employeeModel>EMAILID}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <!-- <Text text="{employeeModel>STARTDATE}" /> -->
+                                <DatePicker
+                                    value="{employeeModel>STARTDATE}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <!-- <Text text="{employeeModel>ENDDATE}" /> -->
+                                <DatePicker
+                                    value="{employeeModel>ENDDATE}"
+                                    editable="{employeeModel>isEditable}"
+                                />
+                                <!-- <Text text="{employeeModel>EMPLOYEESTATUS}" /> -->
+                                <ComboBox
+                                    selectedKey="{employeeModel>EMPLOYEESTATUS}"
+                                    id="employeeStatusComboBoxs"
+                                    editable="{employeeModel>isEditable}"
+                                >
+                                    <core:Item
+                                        key="Active"
+                                        text="Active"
+                                    />
+                                    <core:Item
+                                        key="Inactive"
+                                        text="Inactive"
+                                    />
+                                </ComboBox>
+                                <!-- <Text text="{employeeModel>EMPLOYEETYPE}" /> -->
+                                <ComboBox
+                                    selectedKey="{employeeModel>EMPLOYEETYPE}"
+                                    id="employeeTypeComboBoxs"
+                                    editable="{employeeModel>isEditable}"
+                                >
+                                    <core:Item
+                                        key="Full-time"
+                                        text="Full-time"
+                                    />
+                                    <core:Item
+                                        key="Part-Time"
+                                        text="Part-Time"
+                                    />
+                                    <core:Item
+                                        key="Contractor"
+                                        text="Contractor"
+                                    />
+                                </ComboBox>
+
+                                <!-- <Text text="{employeeModel>MANAGERFLAG}" /> -->
+                                <!-- <CheckBox
+                                    selected="{employeeModel>MANAGERFLAG}"
+                                /> -->
+                                <ComboBox
+                                    selectedKey="{employeeModel>MANAGERFLAG}"
+                                    id="mahagerComboBoxs"
+                                    editable="{employeeModel>isEditable}"
+                                >
+                                    <core:Item
+                                        key="Yes"
+                                        text="Yes"
+                                    />
+                                    <core:Item
+                                        key="No"
+                                        text="No"
+                                    />
+                                </ComboBox>
+                                <HBox justifyContent="SpaceBetween">
+                                    <Button
+                                        id="multibtn"
+                                        text="{= ${employeeModel>isNew} ? 'Save' : (${employeeModel>isEdited} ? 'Update' : 'Edit')}"
+                                        press=".onActionPress"
+                                    />
+
+                                    <Button
+                                        text="Delete"
+                                        press="onDeletePress"
+                                    />
+                                </HBox>
                             </cells>
                         </ColumnListItem>
                     </items>

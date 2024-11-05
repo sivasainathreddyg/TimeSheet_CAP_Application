@@ -29,7 +29,9 @@ footer.sapMDialogFooter {
 .sapMSPCMonthDay.sapMSPCMonthDaySelected {
     background: #e5faed70;
 }
-
+.classAddEmployee{
+    left: 90%;
+}
 span#container-BPSH133_LeaveTracker---Main--legendButton-img {
     color: aqua;
 }
