@@ -110,7 +110,34 @@ module.exports = srv => {
             return JSON.stringify()
         }
     });
-
+    srv.on("DeleteEmployeeDetails",async req=>{
+        const EmployeeID=req.data.Employeeid.trim();
+        const employee = await cds.transaction(req).run(
+            SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EMPLOYEEID: EmployeeID })
+        );
+        if (employee) {
+            await cds.run(
+                DELETE.from('TIMESHEETTABLE_EMPLOYEEDETAILS')
+                    .where({ EmployeeID: EmployeeID })
+            );
+        }else{
+            return JSON.stringify();
+        }
+    });
+    srv.on("DeleteprojectDetails",async req=>{
+        const PROJECTID=req.data.PROJECTID.trim();
+        const projectdetails = await cds.transaction(req).run(
+            SELECT.one.from("TIMESHEETTABLE_PROJECTDETAILS").where({ PROJECTID: PROJECTID })
+        );
+        if (projectdetails) {
+            await cds.run(
+                DELETE.from('TIMESHEETTABLE_PROJECTDETAILS')
+                    .where({ PROJECTID: PROJECTID })
+            );
+        }else{
+            return JSON.stringify();
+        }
+    });
 
     srv.on("TimeSheetdata", async req => {
         const empid = req.data.empid.trim();
@@ -225,57 +252,83 @@ module.exports = srv => {
             return { status: "error", message: "An error occurred while retrieving employee details." };
         }
     });
-
-    srv.on('CreateNewProject', async (req) => {
-        // Parse the stringified JSON data
-        let parsedData;
+    srv.on("retriveProjectDetailsData", async (req) => {
+       
 
         try {
-            // Parse the NewEmployeeData string to JSON
-            parsedData = JSON.parse(req.data.Newprojectdetailsdata);
-        } catch (error) {
-            return req.error(400, 'Invalid JSON data provided.');
-        }
 
-        const {
-            ProjectID, Status, KY, ProjectName, Department,
-            StartDate, EndDate, TotalHours, RemainingHours
-        } = parsedData;
-
-        try {
-            // Step 1: Check if EmployeeID already exists in the EmployeeDetails table
-            const existingEmployee = await cds.transaction(req).run(
-                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
-                    .where({ PROJECTID: ProjectID })
+            const projectdetails = await cds.transaction(req).run(
+                SELECT.from("TIMESHEETTABLE_PROJECTDETAILS")
             );
 
-            // If employee already exists, throw an error
-            if (existingEmployee) {
-                return req.error(400, `projects with ID ${ProjectID} already exists.`);
+            if (projectdetails) {
+
+                const projectdetailsdata = JSON.stringify(projectdetails);
+
+
+                return { status: "success", data: projectdetailsdata };
+            } else {
+
+                return { status: "error", message: "Employee not found." };
             }
-            const formattedStartDate = new Date(StartDate).toISOString().slice(0, 19); // Format to "YYYY-MM-DDTHH:MM:SS"
-            const formattedEndDate = new Date(EndDate).toISOString().slice(0, 19);
-            // Step 2: If not, insert a new employee record into the EmployeeDetails table
-            await cds.transaction(req).run(
-                INSERT.into('TIMESHEETTABLE_PROJECTDETAILS').entries({
-                    ProjectID: ProjectID,
-                    Status: Status,
-                    KY: KY,
-                    ProjectName: ProjectName,
-                    Department: Department,
-                    StartDate: formattedStartDate,
-                    EndDate: formattedEndDate,
-                    TotalHours: TotalHours,
-                    RemainingHours: RemainingHours
-                })
-            );
 
-            // Step 3: Return success message
-            return 'Employee Details Created successfully';
         } catch (error) {
-            return req.error(500, 'Failed to create employee details: ' + error.message);
+            // Handle any errors that occur during the process
+            return { status: "error", message: "An error occurred while retrieving project details." };
         }
     });
+
+
+    // srv.on('CreateNewProject', async (req) => {
+    //     // Parse the stringified JSON data
+    //     let parsedData;
+
+    //     try {
+    //         // Parse the NewEmployeeData string to JSON
+    //         parsedData = JSON.parse(req.data.Newprojectdetailsdata);
+    //     } catch (error) {
+    //         return req.error(400, 'Invalid JSON data provided.');
+    //     }
+
+    //     const {
+    //         ProjectID, Status, KY, ProjectName, Department,
+    //         StartDate, EndDate, TotalHours, RemainingHours
+    //     } = parsedData;
+
+    //     try {
+    //         // Step 1: Check if EmployeeID already exists in the EmployeeDetails table
+    //         const existingEmployee = await cds.transaction(req).run(
+    //             SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+    //                 .where({ PROJECTID: ProjectID })
+    //         );
+
+    //         // If employee already exists, throw an error
+    //         if (existingEmployee) {
+    //             return req.error(400, `projects with ID ${ProjectID} already exists.`);
+    //         }
+    //         const formattedStartDate = new Date(StartDate).toISOString().slice(0, 19); // Format to "YYYY-MM-DDTHH:MM:SS"
+    //         const formattedEndDate = new Date(EndDate).toISOString().slice(0, 19);
+    //         // Step 2: If not, insert a new employee record into the EmployeeDetails table
+    //         await cds.transaction(req).run(
+    //             INSERT.into('TIMESHEETTABLE_PROJECTDETAILS').entries({
+    //                 ProjectID: ProjectID,
+    //                 Status: Status,
+    //                 KY: KY,
+    //                 ProjectName: ProjectName,
+    //                 Department: Department,
+    //                 StartDate: formattedStartDate,
+    //                 EndDate: formattedEndDate,
+    //                 TotalHours: TotalHours,
+    //                 RemainingHours: RemainingHours
+    //             })
+    //         );
+
+    //         // Step 3: Return success message
+    //         return 'Employee Details Created successfully';
+    //     } catch (error) {
+    //         return req.error(500, 'Failed to create employee details: ' + error.message);
+    //     }
+    // });
 
 
     srv.on('CreateNewEmployeeDeatils', async (req) => {
@@ -328,6 +381,55 @@ module.exports = srv => {
             return 'Employee Details Created successfully';
         } catch (error) {
             return req.error(500, 'Failed to create employee details: ' + error.message);
+        }
+    });
+
+
+    srv.on('CreateNewProjectDeatils', async (req) => {
+        // Parse the stringified JSON data
+        let parsedData;
+
+        try {
+            // Parse the NewEmployeeData string to JSON
+            parsedData = JSON.parse(req.data.NewprojectdetailsData);
+        } catch (error) {
+            return req.error(400, 'Invalid JSON data provided.');
+        }
+
+        const {
+            PROJECTID, KY, PROJECTNAME, DEPARTMENT, StartDate, EndDate, TOTALHOURS, REMAININGHOURS
+        } = parsedData;
+
+        try {
+            // Step 1: Check if EmployeeID already exists in the EmployeeDetails table
+            const existingEmployee = await cds.transaction(req).run(
+                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                    .where({ PROJECTID: PROJECTID })
+            );
+
+            // If employee already exists, throw an error
+            if (existingEmployee) {
+                return req.error(400, `Employee with ID ${PROJECTID} already exists.`);
+            }
+
+            // Step 2: If not, insert a new employee record into the EmployeeDetails table
+            await cds.transaction(req).run(
+                INSERT.into('TIMESHEETTABLE_PROJECTDETAILS').entries({
+                    PROJECTID:PROJECTID,
+                    KY: KY,
+                    PROJECTNAME: PROJECTNAME,
+                    DEPARTMENT: DEPARTMENT,
+                    StartDate: StartDate, 
+                    EndDate:  EndDate,  
+                    TOTALHOURS: TOTALHOURS,
+                    REMAININGHOURS: REMAININGHOURS,
+                })
+            );
+
+            // Step 3: Return success message
+            return 'project Details Created successfully';
+        } catch (error) {
+            return req.error(500, 'Failed to create project details: ' + error.message);
         }
     });
 
@@ -384,6 +486,58 @@ module.exports = srv => {
             return 'Employee Details Created successfully';
         } catch (error) {
             return req.error(500, 'Failed to create employee details: ' + error.message);
+        }
+    });
+
+    
+    srv.on('UpdateProjectDeatils', async (req) => {
+        // Parse the stringified JSON data
+        let parsedData;
+
+        try {
+            // Parse the NewEmployeeData string to JSON
+            parsedData = JSON.parse(req.data.updateprojectdetailsData);
+        } catch (error) {
+            return req.error(400, 'Invalid JSON data provided.');
+        }
+
+        const {
+            PROJECTID, KY, PROJECTNAME, DEPARTMENT, StartDate, EndDate, TOTALHOURS, REMAININGHOURS
+        } = parsedData;
+
+        try {
+            // Step 1: Check if EmployeeID already exists in the EmployeeDetails table
+            const existingEmployee = await cds.transaction(req).run(
+                SELECT.one.from('TIMESHEETTABLE_PROJECTDETAILS')
+                    .where({ PROJECTID: PROJECTID })
+            );
+
+            // If employee already exists, throw an error
+            if (existingEmployee) {
+                await cds.run(
+                    DELETE.from('TIMESHEETTABLE_PROJECTDETAILS')
+                        .where({ PROJECTID: PROJECTID })
+                );
+            }
+
+            // Step 2: If not, insert a new employee record into the EmployeeDetails table
+            await cds.transaction(req).run(
+                INSERT.into('TIMESHEETTABLE_PROJECTDETAILS').entries({
+                    PROJECTID:PROJECTID,
+                    KY: KY,
+                    PROJECTNAME: PROJECTNAME,
+                    DEPARTMENT: DEPARTMENT,
+                    StartDate: StartDate, // Use formatted date
+                    EndDate:  EndDate,   // Use formatted date
+                    TOTALHOURS: TOTALHOURS,
+                    REMAININGHOURS: REMAININGHOURS,
+                })
+            );
+
+            // Step 3: Return success message
+            return 'Project Details Created successfully';
+        } catch (error) {
+            return req.error(500, 'Failed to create project details: ' + error.message);
         }
     });
 

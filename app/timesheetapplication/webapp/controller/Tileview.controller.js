@@ -86,6 +86,9 @@ sap.ui.define(
           },
           onEmployeeManagment:function(){
             that.component.navTo("EmployeeView");
+          },
+          onProjectManagment:function(){
+            that.component.navTo("ProjectDetails");
           }
       });
     }

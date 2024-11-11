@@ -87,19 +87,19 @@ sap.ui.define([
 
             oEmployeeModel.setProperty("/employees", aEmployees);
         },
-        onDeletePress: function (oEvent) {
-            // Get the binding context of the selected row
-            var oContext = oEvent.getSource().getBindingContext("employeeModel");
-            var oEmployeeModel = this.getView().getModel("employeeModel");
-            var aEmployees = oEmployeeModel.getProperty("/employees");
+        // onDeletePress: function (oEvent) {
+        //     // Get the binding context of the selected row
+        //     var oContext = oEvent.getSource().getBindingContext("employeeModel");
+        //     var oEmployeeModel = this.getView().getModel("employeeModel");
+        //     var aEmployees = oEmployeeModel.getProperty("/employees");
 
-            // Find the index of the row to be deleted
-            var iIndex = aEmployees.indexOf(oContext.getObject());
-            if (iIndex !== -1) {
-                aEmployees.splice(iIndex, 1);
-                oEmployeeModel.setProperty("/employees", aEmployees);
-            }
-        },
+        //     // Find the index of the row to be deleted
+        //     var iIndex = aEmployees.indexOf(oContext.getObject());
+        //     if (iIndex !== -1) {
+        //         aEmployees.splice(iIndex, 1);
+        //         oEmployeeModel.setProperty("/employees", aEmployees);
+        //     }
+        // },
         // onActionPress: function (oEvent) {
         //     var text = oEvent.getSource().getText();
         //     if (text === "Save") {
@@ -124,10 +124,9 @@ sap.ui.define([
             var text = oButton.getText();
         
             if (text === "Save") {
-                this.oncreatenewemployee();
+                this.oncreatenewemployee(oEmployee);
                 // After saving, set isNew to false and isEdited to true
-                oEmployee.isNew = false;
-                oEmployee.isEdited = false; // Assuming the employee is now being edited
+                 // Assuming the employee is now being edited
             } else if (text === "Update") {
                 this.onEmployeeUpdate(oContext);
                 // Optionally, set isEdited to false if you want to reset the state after update
@@ -145,7 +144,7 @@ sap.ui.define([
         },
         
 
-        oncreatenewemployee: function () {
+        oncreatenewemployee: function (oEmployee) {
             // Define DateFormat instance for formatting
             var DateFormat = sap.ui.core.format.DateFormat.getInstance({
                 pattern: "yyyy-MM-dd", // Desired date format
@@ -209,6 +208,8 @@ sap.ui.define([
                 success: function (oData) {
                     // Handle success
                     sap.m.MessageToast.show("Employee Details Created successfully.");
+                    oEmployee.isNew = false;
+                oEmployee.isEdited = false;
                     oModel.isNew = false;
                     this.getView().getModel('employeeModel').refresh();
                 }.bind(this),
@@ -230,7 +231,7 @@ sap.ui.define([
             var oModel = oContext.getObject();
 
             // Validate required fields
-            if (!oModel.EMPLOYEEID || !oModel.FIRSTNAME || !oModel.LASTNAME || !oModel.DESIGNATION ||
+            if (!oModel.EMPLOYEEID || !oModel.FIRSTNAME || oModel.LASTNAME || !oModel.DESIGNATION ||
                 !oModel.PASSWORD || !oModel.EMAILID || !oModel.STARTDATE || !oModel.ENDDATE ||
                 !oModel.EMPLOYEESTATUS || !oModel.EMPLOYEETYPE) {
 
@@ -281,7 +282,7 @@ sap.ui.define([
                 urlParameters: { updateemployeedata: jsonString },
                 success: function (oData) {
                     // Handle success
-                    sap.m.MessageToast.show("Employee Details Created successfully.");
+                    sap.m.MessageToast.show("Employee Details Updated successfully.");
 
 
 
@@ -292,5 +293,36 @@ sap.ui.define([
                 }
             });
         },
+        onBackPressEmployeepage:function(){
+            this.getOwnerComponent().getRouter().navTo("Tileview");
+        },
+        onDeletePress:function(oEvent){
+            var oButton = oEvent.getSource();
+            var oContext = oButton.getBindingContext("employeeModel");
+            var oModel = oContext.getObject();
+
+            var EmployeeID=oModel.EMPLOYEEID;
+            var oModel = this.getOwnerComponent().getModel("oModel");
+
+            oModel.callFunction("/DeleteEmployeeDetails", {
+                method: "GET",
+                urlParameters: { Employeeid: EmployeeID },
+                success: function (oData) {
+                    // Handle success
+                    this._loadEmployeeData();
+                    sap.m.MessageToast.show("Employee Details Deleted successfully.");
+
+
+
+
+                }.bind(this),
+                error: function (oError) {
+                    // Handle error
+                    sap.m.MessageBox.error("An error occurred while Employee Details Deleating..");
+                }
+            });
+
+
+        }
     });
 });

@@ -353,7 +353,7 @@ sap.ui.define([
             });
         },
         onHomePress: function () {
-            this.getOwnerComponent().getRouter().navTo("Tileview")
+            this.getOwnerComponent().getRouter().navTo("Tileview");
         },
         // onDownloadanalyticalgraph: function () {
         //     // var chartContainer = this.getView().byId("chartContainer");  // Ensure this is the correct container

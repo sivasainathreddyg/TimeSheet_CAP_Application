@@ -21,7 +21,12 @@ service CatalogService {
     function CreateNewEmployeeDeatils(NewEmployeeData : String)                                                                      returns String;
     function retriveemployeedetails()                                                                                                returns String;
     function UpdateEmployeeDeatils(updateemployeedata : String)                                                                      returns String;
-    function CreateNewProject(Newprojectdetailsdata : String)                                                                        returns String;
+    // function CreateNewProject(Newprojectdetailsdata : String)                                                                        returns String;
     function Authorizechecking(email : String, password : String)                                                                    returns String;
     function projectdetails(projectid : String)                                                                                      returns String;
+    function DeleteEmployeeDetails(Employeeid : String)                                                                              returns String;
+    function retriveProjectDetailsData()                                                                                             returns String;
+    function CreateNewProjectDeatils(NewprojectdetailsData : String)                                                                 returns String;
+    function UpdateProjectDeatils(updateprojectdetailsData : String)                                                                 returns String;
+    function DeleteprojectDetails(PROJECTID : String)                                                                                returns String;
 }

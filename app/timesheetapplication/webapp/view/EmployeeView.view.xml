@@ -4,7 +4,11 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
 >
-    <Page title="Employee Management">
+    <Page
+        title="Employee Management"
+        navButtonPress="onBackPressEmployeepage"
+        showNavButton="true"
+    >
         <content>
             <VBox>
                 <Button
@@ -113,8 +117,8 @@
                                     editable="{employeeModel>isEditable}"
                                 >
                                     <core:Item
-                                        key="Full-time"
-                                        text="Full-time"
+                                        key="Full-Time"
+                                        text="Full-Time"
                                     />
                                     <core:Item
                                         key="Part-Time"
@@ -132,6 +136,7 @@
                                 /> -->
                                 <ComboBox
                                     selectedKey="{employeeModel>MANAGERFLAG}"
+
                                     id="mahagerComboBoxs"
                                     editable="{employeeModel>isEditable}"
                                 >
@@ -146,7 +151,7 @@
                                 </ComboBox>
                                 <HBox justifyContent="SpaceBetween">
                                     <Button
-                                        id="multibtn"
+                                        id="multibtns"
                                         text="{= ${employeeModel>isNew} ? 'Save' : (${employeeModel>isEdited} ? 'Update' : 'Edit')}"
                                         press=".onActionPress"
                                     />

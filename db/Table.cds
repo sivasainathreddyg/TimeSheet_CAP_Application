@@ -84,8 +84,8 @@ entity ProjectDetails {
         KY                      : Int64;
         ProjectName             : String;
         Department              : String;
-        StartDate               : DateTime;
-        EndDate                 : DateTime;
+        StartDate               : Date;
+        EndDate                 : Date;
         TotalHours              : Int16;
         RemainingHours          : Int16;
         BilledHours             : Int16;

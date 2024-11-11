@@ -154,6 +154,13 @@
           "target": [
             "EmployeeView"
           ]
+        },
+        {
+          "name": "ProjectDetails",
+          "pattern": "ProjectDetails",
+          "target": [
+            "ProjectDetails"
+          ]
         }
       ],
       "targets": {
@@ -198,6 +205,13 @@
           "clearControlAggregation": false,
           "viewId": "EmployeeView",
           "viewName": "EmployeeView"
+        },
+        "ProjectDetails": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "ProjectDetails",
+          "viewName": "ProjectDetails"
         }
       }
     },

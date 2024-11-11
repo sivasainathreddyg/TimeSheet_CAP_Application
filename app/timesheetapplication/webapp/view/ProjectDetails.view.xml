@@ -1,0 +1,129 @@
+<mvc:View
+    controllerName="timesheetapplication.controller.ProjectDetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        title="Project Details Management"
+        navButtonPress="onBackPressEmployeepage"
+        showNavButton="true"
+    >
+        <content>
+            <VBox>
+                <Button
+                    text="Add New Project"
+                    press="onAddProject"
+                    class="classAddEmployee"
+                />
+                <Table
+                    id="projectdetails"
+                    items="{projectdetailsdataModel>/projectdetails}"
+                >
+                    <columns>
+                        <Column width="10%">
+                            <Text text="ProjectID" />
+                        </Column>
+                        <Column width="5%">
+                            <Text text="Ky" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="ProjectName" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Department" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Start Date" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="End Date" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="TotalHours" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="RemainingHours" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Status" />
+                        </Column>
+                        <Column width="10%">
+                            <Text text="Actions" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Input
+                                    value="{projectdetailsdataModel>PROJECTID}"
+                                    editable="{= ${projectdetailsdataModel>isNew} ? true : false}"
+                                />
+                                <Input
+                                    value="{projectdetailsdataModel>KY}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                                <Input
+                                    value="{projectdetailsdataModel>PROJECTNAME}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                                <Input
+                                    value="{projectdetailsdataModel>DEPARTMENT}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+
+                                <!-- <Text text="{employeeModel>STARTDATE}" /> -->
+                                <DatePicker
+                                    value="{projectdetailsdataModel>STARTDATE}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                                <!-- <Text text="{employeeModel>ENDDATE}" /> -->
+                                <DatePicker
+                                    value="{projectdetailsdataModel>ENDDATE}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                                <Input
+                                    value="{projectdetailsdataModel>TOTALHOURS}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                                <Input
+                                    value="{projectdetailsdataModel>REMAININGHOURS}"
+                                    editable="{projectdetailsdataModel>isEditable}"
+                                />
+                               
+                                 <ComboBox
+                                    selectedKey="{projectdetailsdataModel>STATUS}"
+
+                                    id="StatusComboBoxs"
+                                     editable="{projectdetailsdataModel>isEditable}"
+                                >
+                                    <core:Item
+                                        key="Active"
+                                        text="Active"
+                                    />
+                                    <core:Item
+                                        key="InActive"
+                                        text="InActive"
+                                    />
+                                </ComboBox>
+
+                                <HBox justifyContent="SpaceBetween">
+                                    <Button
+                                        id="multibtn"
+                                        text="{= ${projectdetailsdataModel>isNew} ? 'Save' : (${projectdetailsdataModel>isEdited} ? 'Update' : 'Edit')}"
+                                        press=".onActionPress"
+                                    />
+
+                                    <Button
+                                        text="Delete"
+                                        press="onDeletePress"
+                                    />
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
