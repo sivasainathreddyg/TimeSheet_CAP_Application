@@ -9,6 +9,14 @@
     background-color: #0000001c;
     background-image: none;
 }
+.fullScreenContainer {
+    height: 100vh; /* Full viewport height */
+    width: 100%;   /* Full viewport width */
+    display: flex; /* Flexbox for centering */
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
 
 #__bar1-BarPH>span#__label2 {
     margin-left: 35em;
@@ -35,9 +43,15 @@ footer.sapMDialogFooter {
 span#container-BPSH133_LeaveTracker---Main--legendButton-img {
     color: aqua;
 }
+.statuscolor {
+    color: white !important;
+}
+.sapUiTinyMarginBeginstatuscolor{
+    color: white !important;
+}
 
 div#__bar0 {
-    background-color: #dcf3fd52;
+    background-color: #d1dde35b;
 }
 
 div#__bar1 {

@@ -84,10 +84,10 @@ sap.ui.define(
           onAnalyticalView:function(){
             that.component.navTo("Analyticalpage");
           },
-          onEmployeeManagment:function(){
+          onEmployeeManagement:function(){
             that.component.navTo("EmployeeView");
           },
-          onProjectManagment:function(){
+          onProjectManagement:function(){
             that.component.navTo("ProjectDetails");
           }
       });

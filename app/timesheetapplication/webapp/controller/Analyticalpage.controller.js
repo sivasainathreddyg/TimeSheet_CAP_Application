@@ -15,6 +15,9 @@ sap.ui.define([
             sap.m.MessageBox.information("Select any project from the Combobox to see the analytical view.");
 
         },
+        onAfterRendering:function(){
+            sap.m.MessageBox.information("Select any project from the Combobox to see the analytical view.");
+        },
 
 
         onProjectSelectionChange: function (oEvent) {

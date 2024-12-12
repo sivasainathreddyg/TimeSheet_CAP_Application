@@ -19,13 +19,15 @@
                         text=""
                         id="FullName"
                         level="H1"
+                        class="statuscolor"
+                       
                     />
                     <core:Icon
                         src="sap-icon://customer"
                         size="150%"
                         press="CustomerHeader"
                         decorative="false"
-                        id="idUserIcon"
+                        id="idUserIconss"
                         color="#0000ff"
                     >
                         <core:layoutData>
@@ -66,17 +68,19 @@
                           <Text
                                 text="Status:"
                                  textAlign="Center"
+                                 class="statuscolor"
                               
                                 />
-                                <Text text="{ostatusModel>/Status}"  class="sapUiTinyMarginBegin"/>
+                                <Text text="{ostatusModel>/Status}"  class="sapUiTinyMarginBeginstatuscolor" />
                           </HBox>
 
                            <HBox id ="subdatevisible">
                           <Text
                                 text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted Date:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved Date:' : 'Saved Date:'}" 
                                  textAlign="Center"
+                                  class="statuscolor"
                                 />
-                                <Text text="{path:'ostatusModel>/SubDate'}"  class="sapUiTinyMarginBegin"  />
+                                <Text text="{path:'ostatusModel>/SubDate'}"  class="sapUiTinyMarginBeginstatuscolor"  />
                           </HBox>
 
                            <HBox id="substatusvisible" >
@@ -84,8 +88,9 @@
                             text= "{=${ostatusModel>/Status} === 'Submitted' ? 'Submitted By:' : ${ostatusModel>/Status} === 'Approved' ? 'Approved By:' : ''}" 
 
                                  textAlign="Center"
+                                  class="statuscolor"
                                 />
-                                <Text text="{=${ostatusModel>/Status} === 'Saved' ? '' : ${ostatusModel>/SubName}}"  class="sapUiTinyMarginBegin" />
+                                <Text text="{=${ostatusModel>/Status} === 'Saved' ? '' : ${ostatusModel>/SubName}}"  class="sapUiTinyMarginBeginstatuscolor" />
                           </HBox>
                             
                             <HBox alignItems="Center">

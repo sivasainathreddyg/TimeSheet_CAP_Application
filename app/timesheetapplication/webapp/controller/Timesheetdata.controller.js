@@ -94,10 +94,10 @@ sap.ui.define(
 
                 // sap.m.MessageToast.show("Timesheet data fetched successfully.");
               } else {
-                sap.m.MessageToast.show("No timesheet data avalible");
+                sap.m.MessageToast.show("No Timesheet history found.");
               }
             } catch (e) {
-              sap.m.MessageBox.error("No timesheet data avalible");
+              sap.m.MessageBox.error("No Timesheet history found.");
             }
           }.bind(this),
           error: function (oError) {

@@ -86,6 +86,7 @@
                 backgroundDesign="Transparent"
                 inset="false"
                 items="{timesheetModel>/timesheetData}"
+                noDataText="{i18n>noDataTable}"
             >
                 <!--<headerToolbar>-->
                 <!--	<Toolbar>-->

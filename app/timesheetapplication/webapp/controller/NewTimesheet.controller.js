@@ -1150,59 +1150,59 @@ sap.ui.define(
 					var startmonthday = startdateParts[0];
 					// var endmonthday=enddateParts[0];
 					var startmonthdate = parseInt(startdateParts[1]);
-						var endmonthdate = parseInt(enddateParts[1]);
-						var monthdaysstart = daysInMonth[startmonthday] - startmonthdate + 1;
-						var monthdayend = endmonthdate;
-						var oTable = this.byId("allocationTable");
-						var aItems = oTable.getItems();
+					var endmonthdate = parseInt(enddateParts[1]);
+					var monthdaysstart = daysInMonth[startmonthday] - startmonthdate + 1;
+					var monthdayend = endmonthdate;
+					var oTable = this.byId("allocationTable");
+					var aItems = oTable.getItems();
 
-						// Object to track project hours
-						var projectHourMap = {};
-						for (var i = 0; i < aItems.length-1; i++) {
-							var oItem = aItems[i];
-							var oCells = oItem.getCells();
-							var projectName = oCells[1].getSelectedKey(); // Get the project name/key
-							
-							// Array to store the day values (Monday to Sunday)
-							var weekHours = [
-								parseInt(oCells[4].getValue(), 10) || 0, // Monday
-								parseInt(oCells[5].getValue(), 10) || 0, // Tuesday
-								parseInt(oCells[6].getValue(), 10) || 0, // Wednesday
-								parseInt(oCells[7].getValue(), 10) || 0, // Thursday
-								parseInt(oCells[8].getValue(), 10) || 0, // Friday
-								parseInt(oCells[9].getValue(), 10) || 0, // Saturday
-								parseInt(oCells[10].getValue(), 10) || 0 // Sunday
-							];
-							
-							// Initialize the total hours for the project
-							var firstMonthTotalHours = 0;
-							var secondMonthTotalHours = 0;
-							
-							// Loop to calculate the total hours for the first month (remaining days of the first month)
-							for (var dayIndex = 0; dayIndex < monthdaysstart; dayIndex++) {
-								firstMonthTotalHours += weekHours[dayIndex];
-							}
-							
-							// Loop to calculate the total hours for the second month (days in the second month)
-							for (var dayIndex = 0; dayIndex < monthdayend; dayIndex++) {
-								secondMonthTotalHours += weekHours[monthdaysstart + dayIndex];
-							}
-							
-							// Check if the projectName already exists in the map
-							if (!projectHourMap[projectName]) {
-								// Initialize the project with empty arrays for both months
-								projectHourMap[projectName] = { 
-									firstMonthHours: 0, 
-									secondMonthHours: 0 
-								};
-							}
-							
-							// Add the calculated hours to the respective month totals for this project
-							projectHourMap[projectName].firstMonthHours += firstMonthTotalHours;
-							projectHourMap[projectName].secondMonthHours += secondMonthTotalHours;
+					// Object to track project hours
+					var projectHourMap = {};
+					for (var i = 0; i < aItems.length - 1; i++) {
+						var oItem = aItems[i];
+						var oCells = oItem.getCells();
+						var projectName = oCells[1].getSelectedKey(); // Get the project name/key
+
+						// Array to store the day values (Monday to Sunday)
+						var weekHours = [
+							parseInt(oCells[4].getValue(), 10) || 0, // Monday
+							parseInt(oCells[5].getValue(), 10) || 0, // Tuesday
+							parseInt(oCells[6].getValue(), 10) || 0, // Wednesday
+							parseInt(oCells[7].getValue(), 10) || 0, // Thursday
+							parseInt(oCells[8].getValue(), 10) || 0, // Friday
+							parseInt(oCells[9].getValue(), 10) || 0, // Saturday
+							parseInt(oCells[10].getValue(), 10) || 0 // Sunday
+						];
+
+						// Initialize the total hours for the project
+						var firstMonthTotalHours = 0;
+						var secondMonthTotalHours = 0;
+
+						// Loop to calculate the total hours for the first month (remaining days of the first month)
+						for (var dayIndex = 0; dayIndex < monthdaysstart; dayIndex++) {
+							firstMonthTotalHours += weekHours[dayIndex];
 						}
-						
+
+						// Loop to calculate the total hours for the second month (days in the second month)
+						for (var dayIndex = 0; dayIndex < monthdayend; dayIndex++) {
+							secondMonthTotalHours += weekHours[monthdaysstart + dayIndex];
+						}
+
+						// Check if the projectName already exists in the map
+						if (!projectHourMap[projectName]) {
+							// Initialize the project with empty arrays for both months
+							projectHourMap[projectName] = {
+								firstMonthHours: 0,
+								secondMonthHours: 0
+							};
+						}
+
+						// Add the calculated hours to the respective month totals for this project
+						projectHourMap[projectName].firstMonthHours += firstMonthTotalHours;
+						projectHourMap[projectName].secondMonthHours += secondMonthTotalHours;
 					}
+
+				}
 
 
 				// Collect data from the table
@@ -1296,10 +1296,10 @@ sap.ui.define(
 					headerData: JSON.stringify(oHeader),
 					itemsData: JSON.stringify(aItemsData),
 					Monthdata: JSON.stringify(monthdata),
-					projecthourdata:JSON.stringify(projectHourMap)|| 0,
+					projecthourdata: JSON.stringify(projectHourMap) || 0,
 					period: sDateRange
 				};
-				
+
 
 				// Get the OData model and call the function
 				var oModel = this.getOwnerComponent().getModel("oModel");
@@ -1309,9 +1309,12 @@ sap.ui.define(
 						if (oData.TimeSheetSubmit.status === "Error") {
 							sap.m.MessageBox.error("TimeSheet already submitted for this time period");
 						} else {
-							MessageToast.show("Timesheet" + operation + " successfully!");
+							sap.m.MessageBox.success("Timesheet"  +  operation + " Successfully!",{
+								closeOnNavigation:false
+							});
+							this.getOwnerComponent().getRouter().navTo("Timesheetdata")
 						}
-					},
+					}.bind(this),
 					error: function (oError) {
 						MessageToast.show("Error: " + oError.message);
 					}

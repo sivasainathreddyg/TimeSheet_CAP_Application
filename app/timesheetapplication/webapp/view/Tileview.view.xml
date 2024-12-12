@@ -48,49 +48,65 @@
 
         <!-- Main Content Section -->
         <content>
-            <VBox justifyContent="Center" alignItems="Center" height="100%">
-                <HBox justifyContent="Center" alignItems="Center" width="50%">
+            <!-- <VBox justifyContent="Center" alignItems="Center" height="100%"> -->
+              <VBox
+    justifyContent="Center"
+    alignItems="Center"
+    fitContainer="true"
+    class="fullScreenContainer">
+    <items>
+        <FlexBox
+            justifyContent="Center"
+            alignItems="Start"
+            wrap="Wrap"
+            class="sapUiSmallMargin">
+            <items>
+                <GenericTile
+                    header="TimeSheet"
+                    press="onTimeSheetView"
+                    frameType="TwoByOne"
+                    class="sapUiTinyMargin">
+                    <TileContent>
+                        <core:Icon src="sap-icon://timesheet" size="2rem" />
+                    </TileContent>
+                </GenericTile>
 
                 <GenericTile
-                        header="TimeSheet"
-                        press="onTimeSheetView"
-                        frameType="TwoByOne"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <core:Icon src="sap-icon://timesheet" size="2rem" />
-                        </TileContent>
-                    </GenericTile>
-                    <GenericTile
-                        header="Employee Managment"
-                        press="onEmployeeManagment"
-                        frameType="TwoByOne"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <core:Icon src="sap-icon://add-employee" size="2rem" />
-                        </TileContent>
-                    </GenericTile>
+                    header="Employee Management"
+                    press="onEmployeeManagement"
+                    frameType="TwoByOne"
+                    class="sapUiTinyMargin">
+                    <TileContent>
+                        <core:Icon src="sap-icon://add-employee" size="2rem" />
+                    </TileContent>
+                </GenericTile>
 
-                    <GenericTile
-                        header="Project Managment"
-                        press="onProjectManagment"
-                        frameType="TwoByOne"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <core:Icon src="sap-icon://create-form" size="2rem" />
-                        </TileContent>
-                    </GenericTile>
+                <GenericTile
+                    header="Project Management"
+                    press="onProjectManagement"
+                    frameType="TwoByOne"
+                    class="sapUiTinyMargin">
+                    <TileContent>
+                        <core:Icon src="sap-icon://create-form" size="2rem" />
+                    </TileContent>
+                </GenericTile>
 
-                    <GenericTile
-                        header="AnalyticalView"
-                        press="onAnalyticalView"
-                        frameType="TwoByOne"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <core:Icon src="sap-icon://bar-chart" size="2rem" />
-                        </TileContent>
-                    </GenericTile>
-                </HBox>
-            </VBox>
+                <GenericTile
+                    header="Analytical View"
+                    press="onAnalyticalView"
+                    frameType="TwoByOne"
+                    class="sapUiTinyMargin">
+                    <TileContent>
+                        <core:Icon src="sap-icon://bar-chart" size="2rem" />
+                    </TileContent>
+                </GenericTile>
+            </items>
+        </FlexBox>
+    </items>
+</VBox>
+
+
+            <!-- </VBox> -->
         </content>
     </Page>
 </mvc:View>
