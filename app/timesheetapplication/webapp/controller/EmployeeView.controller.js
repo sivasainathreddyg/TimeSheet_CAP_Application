@@ -231,7 +231,7 @@ sap.ui.define([
             var oModel = oContext.getObject();
 
             // Validate required fields
-            if (!oModel.EMPLOYEEID || !oModel.FIRSTNAME || oModel.LASTNAME || !oModel.DESIGNATION ||
+            if (!oModel.EMPLOYEEID || !oModel.FIRSTNAME || !oModel.LASTNAME || !oModel.DESIGNATION ||
                 !oModel.PASSWORD || !oModel.EMAILID || !oModel.STARTDATE || !oModel.ENDDATE ||
                 !oModel.EMPLOYEESTATUS || !oModel.EMPLOYEETYPE) {
 
