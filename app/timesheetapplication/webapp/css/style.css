@@ -18,6 +18,17 @@
     box-sizing: border-box;
 }
 
+.largeCheckbox .sapMCbBox {
+    width: 24px; /* Adjust width */
+    height: 24px; /* Adjust height */
+    transform: scale(1.5); /* Increase overall size */
+}
+
+.largeCheckbox .sapMCbInner {
+    width: 18px; /* Adjust inner box size */
+    height: 18px; /* Adjust inner box size */
+}
+
 #__bar1-BarPH>span#__label2 {
     margin-left: 35em;
 }

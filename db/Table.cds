@@ -10,9 +10,9 @@ entity EmployeeDetails {
         EmailID        : String;
         StartDate      : Date;
         EndDate        : Date;
-        EmployeeStatus : String;
+        EmployeeStatus : Boolean;
         EmployeeType   : String;
-        ManagerFlag    : String;
+        ManagerFlag    : Boolean;
         Timesheets     : Composition of many TimeSheetHeader
                              on Timesheets.EmployeeID = $self;
 }

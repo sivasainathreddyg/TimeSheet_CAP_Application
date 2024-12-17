@@ -21,8 +21,8 @@
                     items="{employeeModel>/employees}"
                 >
                     <columns>
-                        <Column width="7%">
-                            <Text text="Employee ID" />
+                        <Column width="8%">
+                            <Text text="EmployeeID" />
                         </Column>
                         <Column width="10%">
                             <Text text="First Name" />
@@ -45,14 +45,14 @@
                         <Column width="12%">
                             <Text text="End Date" />
                         </Column>
-                        <Column width="7%">
-                            <Text text="Status" />
+                        <Column width="7%" hAlign="Center">
+                            <Text text="Active"  />
                         </Column>
                         <Column width="7%">
                             <Text text="Type" />
                         </Column>
-                        <Column width="5%">
-                            <Text text="Flag" />
+                        <Column width="5%" hAlign="Center">
+                            <Text text="Admin" />
                         </Column>
                         <Column width="10%">
                             <Text text="Actions" />
@@ -96,7 +96,7 @@
                                     editable="{employeeModel>isEditable}"
                                 />
                                 <!-- <Text text="{employeeModel>EMPLOYEESTATUS}" /> -->
-                                <ComboBox
+                                <!-- <ComboBox
                                     selectedKey="{employeeModel>EMPLOYEESTATUS}"
                                     id="employeeStatusComboBoxs"
                                     editable="{employeeModel>isEditable}"
@@ -109,8 +109,20 @@
                                         key="Inactive"
                                         text="Inactive"
                                     />
-                                </ComboBox>
+                                </ComboBox> -->
                                 <!-- <Text text="{employeeModel>EMPLOYEETYPE}" /> -->
+
+                                <CheckBox
+                                   
+                                    selected="{employeeModel>EMPLOYEESTATUS}"
+                                    editable="{employeeModel>isEditable}"
+                                    id="employeeStatusCheckBox"
+                                    select=".onCheckBoxSelect"
+                                    class="largeCheckbox"
+                                 
+                                />
+
+
                                 <ComboBox
                                     selectedKey="{employeeModel>EMPLOYEETYPE}"
                                     id="employeeTypeComboBoxs"
@@ -134,7 +146,7 @@
                                 <!-- <CheckBox
                                     selected="{employeeModel>MANAGERFLAG}"
                                 /> -->
-                                <ComboBox
+                                <!-- <ComboBox
                                     selectedKey="{employeeModel>MANAGERFLAG}"
 
                                     id="mahagerComboBoxs"
@@ -148,7 +160,16 @@
                                         key="No"
                                         text="No"
                                     />
-                                </ComboBox>
+                                </ComboBox> -->
+
+                                <CheckBox
+                                   
+                                    selected="{employeeModel>MANAGERFLAG}"
+                                    editable="{employeeModel>isEditable}"
+                                    id="MANAGERFLAGCheckBox"
+                                    select=".onCheckBoxSelect"
+                                    width="30%"
+                                />
                                 <HBox justifyContent="SpaceBetween">
                                     <Button
                                         id="multibtns"

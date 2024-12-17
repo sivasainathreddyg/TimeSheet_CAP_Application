@@ -36,7 +36,7 @@ module.exports = srv => {
                 const { MANAGERFLAG } = employee;
 
                 // Step 3: Check if ManagerFlag is 'Yes'
-                if (MANAGERFLAG === 'Yes') {
+                if (MANAGERFLAG === true) {
                     // Successful authorization for managers
                     return "success";
                 } else {
@@ -146,7 +146,7 @@ module.exports = srv => {
             SELECT.one.from("TIMESHEETTABLE_EMPLOYEEDETAILS").where({ EMPLOYEEID: empid })
         );
 
-        if (employee.MANAGERFLAG === "No") {
+        if (employee.MANAGERFLAG === false) {
             const fullName = `${employee.FIRSTNAME} ${employee.LASTNAME}`;
 
             const timesheetData = await cds.transaction(req).run(
@@ -227,31 +227,55 @@ module.exports = srv => {
             return req.error(500, 'Failed to update timesheet status: ' + error.message);
         }
     });
-    srv.on("retriveemployeedetails", async (req) => {
+    // srv.on("retriveemployeedetails", async (req) => {
        
 
-        try {
+    //     try {
 
-            const employee = await cds.transaction(req).run(
+    //         const employee = await cds.transaction(req).run(
+    //             SELECT.from("TIMESHEETTABLE_EMPLOYEEDETAILS")
+    //         );
+
+    //         if (employee) {
+
+    //             const employeeData = JSON.stringify(employee);
+
+
+    //             return { status: "success", data: employeeData };
+    //         } else {
+
+    //             return { status: "error", message: "Employee not found." };
+    //         }
+
+    //     } catch (error) {
+    //         // Handle any errors that occur during the process
+    //         return { status: "error", message: "An error occurred while retrieving employee details." };
+    //     }
+    // });
+
+    srv.on("retriveemployeedetails", async (req) => {
+        try {
+            const employees = await cds.transaction(req).run(
                 SELECT.from("TIMESHEETTABLE_EMPLOYEEDETAILS")
             );
-
-            if (employee) {
-
-                const employeeData = JSON.stringify(employee);
-
-
+    
+            if (employees && employees.length > 0) {
+                // Map the result to convert 0/1 to true/false for boolean columns
+                const employeeDatas = employees.map(employee => ({
+                    ...employee,
+                    EMPLOYEESTATUS: employee.EMPLOYEESTATUS === 1,
+                    MANAGERFLAG: employee.MANAGERFLAG === 1
+                }));
+                const employeeData = JSON.stringify(employeeDatas);
                 return { status: "success", data: employeeData };
             } else {
-
-                return { status: "error", message: "Employee not found." };
+                return { status: "error", message: "No employee records found." };
             }
-
         } catch (error) {
-            // Handle any errors that occur during the process
             return { status: "error", message: "An error occurred while retrieving employee details." };
         }
     });
+    
     srv.on("retriveProjectDetailsData", async (req) => {
        
 

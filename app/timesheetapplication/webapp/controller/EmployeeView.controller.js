@@ -79,9 +79,9 @@ sap.ui.define([
                 EMAILID: "",
                 STARTDATE: "",
                 ENDDATE: "",
-                EMPLOYEESTATUS: "",
+                EMPLOYEESTATUS: false,
                 EMPLOYEETYPE: "",
-                MANAGERFLAG: "",
+                MANAGERFLAG: false,
                 isNew: true // Flag to identify as a new row
             });
 

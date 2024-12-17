@@ -60,7 +60,7 @@ sap.ui.define([
                             },
                             odata: oData
                         });
-                        if(oData.MANAGERFLAG==="No"){
+                        if(oData.MANAGERFLAG===0){
                             that.component.navTo("Timesheetdata");
                         }else{
                             that.component.navTo("Tileview");
